@@ -45,7 +45,7 @@ async function requireAuthedUserId(): Promise<string> {
 }
 
 /**
- * Upload an already-processed 64×64 PNG and register it in `custom_icons`.
+ * Upload an already-processed 48×48 PNG and register it in `custom_icons`.
  */
 async function uploadProcessedIconBlob(
   blob: Blob,

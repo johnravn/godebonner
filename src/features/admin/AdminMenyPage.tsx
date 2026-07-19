@@ -72,6 +72,19 @@ function parseSort(value: number | string): number {
   return typeof value === 'string' ? Number.parseInt(value, 10) : value
 }
 
+/** Throw a single error listing every invalid/missing field. */
+function throwFieldErrors(
+  checks: Array<string | false | null | undefined>,
+): void {
+  const errors = checks.filter((c): c is string => typeof c === 'string')
+  if (errors.length === 0) return
+  throw new Error(errors.join(' '))
+}
+
+function dialogErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : 'Noe gikk galt.'
+}
+
 function flattenMenuTree(rows: MenuTreeRow[]): {
   categories: MenuExplorerCategory[]
   items: MenuExplorerItem[]
@@ -442,7 +455,7 @@ export function AdminMenyPage() {
   const saveMenuMutation = useMutation({
     mutationFn: async () => {
       const name = menuName.trim()
-      if (!name) throw new Error('Fyll inn menynavn.')
+      throwFieldErrors([!name && 'Fyll inn menynavn.'])
       const group_id = menuGroupId || null
 
       if (menuEditingId) {
@@ -482,9 +495,11 @@ export function AdminMenyPage() {
   const saveGroupMutation = useMutation({
     mutationFn: async () => {
       const name = groupName.trim()
-      if (!name) throw new Error('Fyll inn gruppenavn.')
       const sort = parseSort(groupSort)
-      if (!Number.isFinite(sort)) throw new Error('Ugyldig sorteringsorden.')
+      throwFieldErrors([
+        !name && 'Fyll inn gruppenavn.',
+        !Number.isFinite(sort) && 'Sortering må være et tall.',
+      ])
 
       if (groupEditingId) {
         const patch: TablesUpdate<'menu_groups'> = {
@@ -600,11 +615,13 @@ export function AdminMenyPage() {
 
   const saveCategoryMutation = useMutation({
     mutationFn: async () => {
-      if (!selectedMenuId) throw new Error('Velg en meny først.')
       const name = categoryName.trim()
-      if (!name) throw new Error('Fyll inn mappenavn.')
       const sort = parseSort(categorySort)
-      if (!Number.isFinite(sort)) throw new Error('Ugyldig sorteringsorden.')
+      throwFieldErrors([
+        !selectedMenuId && 'Velg en meny først.',
+        !name && 'Fyll inn mappenavn.',
+        !Number.isFinite(sort) && 'Sortering må være et tall.',
+      ])
 
       if (categoryEditingId) {
         const patch: TablesUpdate<'menu_categories'> = {
@@ -621,7 +638,7 @@ export function AdminMenyPage() {
       }
 
       const insert: TablesInsert<'menu_categories'> = {
-        menu_id: selectedMenuId,
+        menu_id: selectedMenuId!,
         name,
         sort_order: sort,
         icon: categoryIcon,
@@ -649,14 +666,15 @@ export function AdminMenyPage() {
 
   const saveItemMutation = useMutation({
     mutationFn: async () => {
-      if (!itemCategoryId) throw new Error('Mangler kategori.')
-      if (!itemCatalogId) throw new Error('Velg en vare fra varebanken.')
       const price = parsePrice(itemPrice)
-      if (!Number.isFinite(price) || price < 0) {
-        throw new Error('Oppgi en gyldig pris (0 eller mer).')
-      }
       const sort = parseSort(itemSort)
-      if (!Number.isFinite(sort)) throw new Error('Ugyldig sorteringsorden.')
+      throwFieldErrors([
+        !itemCategoryId && 'Mangler kategori.',
+        !itemCatalogId && 'Velg en vare fra varebanken.',
+        (!Number.isFinite(price) || price < 0) &&
+          'Oppgi en gyldig pris (0 eller mer).',
+        !Number.isFinite(sort) && 'Sortering må være et tall.',
+      ])
 
       if (itemEditingId) {
         const patch: TablesUpdate<'menu_items'> = {
@@ -674,7 +692,7 @@ export function AdminMenyPage() {
       }
 
       const insert: TablesInsert<'menu_items'> = {
-        category_id: itemCategoryId,
+        category_id: itemCategoryId!,
         catalog_item_id: itemCatalogId,
         price,
         is_sold_out: itemSoldOut,
@@ -717,13 +735,14 @@ export function AdminMenyPage() {
   const saveCatalogMutation = useMutation({
     mutationFn: async () => {
       const name = catalogName.trim()
-      if (!name) throw new Error('Fyll inn varenavn.')
       const price = parsePrice(catalogPrice)
-      if (!Number.isFinite(price) || price < 0) {
-        throw new Error('Oppgi en gyldig standardpris (0 eller mer).')
-      }
       const sort = parseSort(catalogSort)
-      if (!Number.isFinite(sort)) throw new Error('Ugyldig sorteringsorden.')
+      throwFieldErrors([
+        !name && 'Fyll inn varenavn.',
+        (!Number.isFinite(price) || price < 0) &&
+          'Oppgi en gyldig standardpris (0 eller mer).',
+        !Number.isFinite(sort) && 'Sortering må være et tall.',
+      ])
 
       if (catalogEditingId) {
         const patch: TablesUpdate<'menu_catalog_items'> = {
@@ -1490,37 +1509,58 @@ export function AdminMenyPage() {
       {/* Menu dialog */}
       <Win95Dialog
         open={menuDialogOpen}
-        onClose={() => setMenuDialogOpen(false)}
+        onClose={() => {
+          setMenuDialogOpen(false)
+          saveMenuMutation.reset()
+        }}
         title={menuEditingId ? 'Rediger meny' : 'Ny meny'}
-        width="420px"
-        minHeight="280px"
+        width="720px"
+        minHeight="320px"
       >
-        <div className="win95-field">
-          <label htmlFor="menu-name">Navn</label>
-          <Input
-            id="menu-name"
-            value={menuName}
-            onChange={(e) => setMenuName(e.currentTarget.value)}
-            style={{ width: '100%' }}
-          />
+        <div className="win95-dialog-form-with-icon">
+          <div className="win95-dialog-form-with-icon__fields">
+            <div className="win95-field">
+              <label htmlFor="menu-name">Navn</label>
+              <Input
+                id="menu-name"
+                value={menuName}
+                onChange={(e) => setMenuName(e.currentTarget.value)}
+                style={{ width: '100%' }}
+              />
+            </div>
+            <div className="win95-field" style={{ marginTop: 8 }}>
+              <label htmlFor="menu-group">Gruppe</label>
+              <Win95Select
+                id="menu-group"
+                options={groupSelectOptions}
+                value={menuGroupId}
+                onChange={setMenuGroupId}
+              />
+            </div>
+          </div>
+          <div className="win95-dialog-form-with-icon__icon">
+            <React95IconPicker
+              value={menuIcon}
+              onChange={setMenuIcon}
+              labelId="menu-icon-label"
+              defaultIcon={REACT95_MENU_ICON}
+            />
+          </div>
         </div>
-        <div className="win95-field" style={{ marginTop: 8 }}>
-          <label htmlFor="menu-group">Gruppe</label>
-          <Win95Select
-            id="menu-group"
-            options={groupSelectOptions}
-            value={menuGroupId}
-            onChange={setMenuGroupId}
-          />
-        </div>
-        <React95IconPicker
-          value={menuIcon}
-          onChange={setMenuIcon}
-          labelId="menu-icon-label"
-          defaultIcon={REACT95_MENU_ICON}
-        />
+        {saveMenuMutation.isError ? (
+          <p className="win95-dialog-field-error" role="alert">
+            {dialogErrorMessage(saveMenuMutation.error)}
+          </p>
+        ) : null}
         <Frame display="flex" justifyContent="flex-end" gap="$2" mt="$2">
-          <Button onClick={() => setMenuDialogOpen(false)}>Avbryt</Button>
+          <Button
+            onClick={() => {
+              setMenuDialogOpen(false)
+              saveMenuMutation.reset()
+            }}
+          >
+            Avbryt
+          </Button>
           <Button
             disabled={saveMenuMutation.isPending}
             onClick={() => saveMenuMutation.mutate()}
@@ -1533,39 +1573,60 @@ export function AdminMenyPage() {
       {/* Group dialog */}
       <Win95Dialog
         open={groupDialogOpen}
-        onClose={() => setGroupDialogOpen(false)}
+        onClose={() => {
+          setGroupDialogOpen(false)
+          saveGroupMutation.reset()
+        }}
         title={groupEditingId ? 'Rediger gruppe' : 'Ny gruppe'}
-        width="420px"
-        minHeight="260px"
+        width="720px"
+        minHeight="300px"
       >
-        <div className="win95-field">
-          <label htmlFor="group-name">Navn</label>
-          <Input
-            id="group-name"
-            value={groupName}
-            onChange={(e) => setGroupName(e.currentTarget.value)}
-            placeholder="f.eks. Summercamp"
-            style={{ width: '100%' }}
-          />
+        <div className="win95-dialog-form-with-icon">
+          <div className="win95-dialog-form-with-icon__fields">
+            <div className="win95-field">
+              <label htmlFor="group-name">Navn</label>
+              <Input
+                id="group-name"
+                value={groupName}
+                onChange={(e) => setGroupName(e.currentTarget.value)}
+                placeholder="f.eks. Summercamp"
+                style={{ width: '100%' }}
+              />
+            </div>
+            <div className="win95-field" style={{ marginTop: 8 }}>
+              <label htmlFor="group-sort">Sortering</label>
+              <Input
+                id="group-sort"
+                type="number"
+                value={String(groupSort)}
+                onChange={(e) => setGroupSort(e.currentTarget.value)}
+                style={{ width: '100%' }}
+              />
+            </div>
+          </div>
+          <div className="win95-dialog-form-with-icon__icon">
+            <React95IconPicker
+              value={groupIcon}
+              onChange={setGroupIcon}
+              labelId="group-icon-label"
+              defaultIcon={REACT95_FOLDER_ICON}
+            />
+          </div>
         </div>
-        <div className="win95-field" style={{ marginTop: 8 }}>
-          <label htmlFor="group-sort">Sortering</label>
-          <Input
-            id="group-sort"
-            type="number"
-            value={String(groupSort)}
-            onChange={(e) => setGroupSort(e.currentTarget.value)}
-            style={{ width: '100%' }}
-          />
-        </div>
-        <React95IconPicker
-          value={groupIcon}
-          onChange={setGroupIcon}
-          labelId="group-icon-label"
-          defaultIcon={REACT95_FOLDER_ICON}
-        />
+        {saveGroupMutation.isError ? (
+          <p className="win95-dialog-field-error" role="alert">
+            {dialogErrorMessage(saveGroupMutation.error)}
+          </p>
+        ) : null}
         <Frame display="flex" justifyContent="flex-end" gap="$2" mt="$2">
-          <Button onClick={() => setGroupDialogOpen(false)}>Avbryt</Button>
+          <Button
+            onClick={() => {
+              setGroupDialogOpen(false)
+              saveGroupMutation.reset()
+            }}
+          >
+            Avbryt
+          </Button>
           <Button
             disabled={saveGroupMutation.isPending}
             onClick={() => saveGroupMutation.mutate()}
@@ -1578,7 +1639,10 @@ export function AdminMenyPage() {
       {/* Copy dialog */}
       <Win95Dialog
         open={copyDialogOpen}
-        onClose={() => setCopyDialogOpen(false)}
+        onClose={() => {
+          setCopyDialogOpen(false)
+          copyMenuMutation.reset()
+        }}
         title="Kopier meny"
         width="400px"
         minHeight="200px"
@@ -1601,8 +1665,20 @@ export function AdminMenyPage() {
             onChange={setCopyGroupId}
           />
         </div>
+        {copyMenuMutation.isError ? (
+          <p className="win95-dialog-field-error" role="alert">
+            {dialogErrorMessage(copyMenuMutation.error)}
+          </p>
+        ) : null}
         <Frame display="flex" justifyContent="flex-end" gap="$2" mt="$2">
-          <Button onClick={() => setCopyDialogOpen(false)}>Avbryt</Button>
+          <Button
+            onClick={() => {
+              setCopyDialogOpen(false)
+              copyMenuMutation.reset()
+            }}
+          >
+            Avbryt
+          </Button>
           <Button
             disabled={copyMenuMutation.isPending}
             onClick={() => copyMenuMutation.mutate()}
@@ -1615,38 +1691,59 @@ export function AdminMenyPage() {
       {/* Category dialog */}
       <Win95Dialog
         open={categoryDialogOpen}
-        onClose={() => setCategoryDialogOpen(false)}
+        onClose={() => {
+          setCategoryDialogOpen(false)
+          saveCategoryMutation.reset()
+        }}
         title={categoryEditingId ? 'Rediger mappe' : 'Ny mappe'}
-        width="420px"
-        minHeight="280px"
+        width="720px"
+        minHeight="320px"
       >
-        <div className="win95-field">
-          <label htmlFor="category-name">Navn</label>
-          <Input
-            id="category-name"
-            value={categoryName}
-            onChange={(e) => setCategoryName(e.currentTarget.value)}
-            style={{ width: '100%' }}
-          />
+        <div className="win95-dialog-form-with-icon">
+          <div className="win95-dialog-form-with-icon__fields">
+            <div className="win95-field">
+              <label htmlFor="category-name">Navn</label>
+              <Input
+                id="category-name"
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.currentTarget.value)}
+                style={{ width: '100%' }}
+              />
+            </div>
+            <div className="win95-field" style={{ marginTop: 8 }}>
+              <label htmlFor="category-sort">Sortering</label>
+              <Input
+                id="category-sort"
+                type="number"
+                value={String(categorySort)}
+                onChange={(e) => setCategorySort(e.currentTarget.value)}
+                style={{ width: '100%' }}
+              />
+            </div>
+          </div>
+          <div className="win95-dialog-form-with-icon__icon">
+            <React95IconPicker
+              value={categoryIcon}
+              onChange={setCategoryIcon}
+              labelId="category-icon-label"
+              defaultIcon={REACT95_FOLDER_ICON}
+            />
+          </div>
         </div>
-        <div className="win95-field" style={{ marginTop: 8 }}>
-          <label htmlFor="category-sort">Sortering</label>
-          <Input
-            id="category-sort"
-            type="number"
-            value={String(categorySort)}
-            onChange={(e) => setCategorySort(e.currentTarget.value)}
-            style={{ width: '100%' }}
-          />
-        </div>
-        <React95IconPicker
-          value={categoryIcon}
-          onChange={setCategoryIcon}
-          labelId="category-icon-label"
-          defaultIcon={REACT95_FOLDER_ICON}
-        />
+        {saveCategoryMutation.isError ? (
+          <p className="win95-dialog-field-error" role="alert">
+            {dialogErrorMessage(saveCategoryMutation.error)}
+          </p>
+        ) : null}
         <Frame display="flex" justifyContent="flex-end" gap="$2" mt="$2">
-          <Button onClick={() => setCategoryDialogOpen(false)}>Avbryt</Button>
+          <Button
+            onClick={() => {
+              setCategoryDialogOpen(false)
+              saveCategoryMutation.reset()
+            }}
+          >
+            Avbryt
+          </Button>
           <Button
             disabled={saveCategoryMutation.isPending}
             onClick={() => saveCategoryMutation.mutate()}
@@ -1659,7 +1756,10 @@ export function AdminMenyPage() {
       {/* Placement dialog */}
       <Win95Dialog
         open={itemDialogOpen}
-        onClose={() => setItemDialogOpen(false)}
+        onClose={() => {
+          setItemDialogOpen(false)
+          saveItemMutation.reset()
+        }}
         title={itemEditingId ? 'Rediger plassering' : 'Legg til vare'}
         width="440px"
         minHeight="420px"
@@ -1726,8 +1826,20 @@ export function AdminMenyPage() {
         >
           Utsolgt
         </Checkbox>
+        {saveItemMutation.isError ? (
+          <p className="win95-dialog-field-error" role="alert">
+            {dialogErrorMessage(saveItemMutation.error)}
+          </p>
+        ) : null}
         <Frame display="flex" justifyContent="flex-end" gap="$2" mt="$2">
-          <Button onClick={() => setItemDialogOpen(false)}>Avbryt</Button>
+          <Button
+            onClick={() => {
+              setItemDialogOpen(false)
+              saveItemMutation.reset()
+            }}
+          >
+            Avbryt
+          </Button>
           <Button
             disabled={saveItemMutation.isPending}
             onClick={() => saveItemMutation.mutate()}
@@ -1740,58 +1852,79 @@ export function AdminMenyPage() {
       {/* Catalog dialog */}
       <Win95Dialog
         open={catalogDialogOpen}
-        onClose={() => setCatalogDialogOpen(false)}
+        onClose={() => {
+          setCatalogDialogOpen(false)
+          saveCatalogMutation.reset()
+        }}
         title={catalogEditingId ? 'Rediger vare' : 'Ny vare'}
-        width="420px"
+        width="720px"
         minHeight="360px"
       >
-        <div className="win95-field">
-          <label htmlFor="catalog-name">Navn</label>
-          <Input
-            id="catalog-name"
-            value={catalogName}
-            onChange={(e) => setCatalogName(e.currentTarget.value)}
-            placeholder="f.eks. Cappuccino"
-            style={{ width: '100%' }}
-          />
+        <div className="win95-dialog-form-with-icon">
+          <div className="win95-dialog-form-with-icon__fields">
+            <div className="win95-field">
+              <label htmlFor="catalog-name">Navn</label>
+              <Input
+                id="catalog-name"
+                value={catalogName}
+                onChange={(e) => setCatalogName(e.currentTarget.value)}
+                placeholder="f.eks. Cappuccino"
+                style={{ width: '100%' }}
+              />
+            </div>
+            <div className="win95-field" style={{ marginTop: 8 }}>
+              <label htmlFor="catalog-price">Standardpris (kr)</label>
+              <Input
+                id="catalog-price"
+                value={String(catalogPrice)}
+                onChange={(e) => setCatalogPrice(e.currentTarget.value)}
+                placeholder="f.eks. 45"
+                style={{ width: '100%' }}
+              />
+            </div>
+            <div className="win95-field" style={{ marginTop: 8 }}>
+              <label htmlFor="catalog-description">Beskrivelse</label>
+              <Input
+                id="catalog-description"
+                value={catalogDescription}
+                onChange={(e) => setCatalogDescription(e.currentTarget.value)}
+                style={{ width: '100%' }}
+              />
+            </div>
+            <div className="win95-field" style={{ marginTop: 8 }}>
+              <label htmlFor="catalog-sort">Sortering</label>
+              <Input
+                id="catalog-sort"
+                type="number"
+                value={String(catalogSort)}
+                onChange={(e) => setCatalogSort(e.currentTarget.value)}
+                style={{ width: '100%' }}
+              />
+            </div>
+          </div>
+          <div className="win95-dialog-form-with-icon__icon">
+            <React95IconPicker
+              value={catalogIcon}
+              onChange={setCatalogIcon}
+              labelId="catalog-icon-label"
+              defaultIcon={REACT95_DEFAULT_ICON}
+            />
+          </div>
         </div>
-        <div className="win95-field" style={{ marginTop: 8 }}>
-          <label htmlFor="catalog-price">Standardpris (kr)</label>
-          <Input
-            id="catalog-price"
-            value={String(catalogPrice)}
-            onChange={(e) => setCatalogPrice(e.currentTarget.value)}
-            placeholder="f.eks. 45"
-            style={{ width: '100%' }}
-          />
-        </div>
-        <div className="win95-field" style={{ marginTop: 8 }}>
-          <label htmlFor="catalog-description">Beskrivelse</label>
-          <Input
-            id="catalog-description"
-            value={catalogDescription}
-            onChange={(e) => setCatalogDescription(e.currentTarget.value)}
-            style={{ width: '100%' }}
-          />
-        </div>
-        <div className="win95-field" style={{ marginTop: 8 }}>
-          <label htmlFor="catalog-sort">Sortering</label>
-          <Input
-            id="catalog-sort"
-            type="number"
-            value={String(catalogSort)}
-            onChange={(e) => setCatalogSort(e.currentTarget.value)}
-            style={{ width: '100%' }}
-          />
-        </div>
-        <React95IconPicker
-          value={catalogIcon}
-          onChange={setCatalogIcon}
-          labelId="catalog-icon-label"
-          defaultIcon={REACT95_DEFAULT_ICON}
-        />
+        {saveCatalogMutation.isError ? (
+          <p className="win95-dialog-field-error" role="alert">
+            {dialogErrorMessage(saveCatalogMutation.error)}
+          </p>
+        ) : null}
         <Frame display="flex" justifyContent="flex-end" gap="$2" mt="$2">
-          <Button onClick={() => setCatalogDialogOpen(false)}>Avbryt</Button>
+          <Button
+            onClick={() => {
+              setCatalogDialogOpen(false)
+              saveCatalogMutation.reset()
+            }}
+          >
+            Avbryt
+          </Button>
           <Button
             disabled={saveCatalogMutation.isPending}
             onClick={() => saveCatalogMutation.mutate()}

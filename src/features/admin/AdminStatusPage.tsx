@@ -8,10 +8,7 @@ function statusBadge(status: HealthCheckResult['status']) {
   if (status === 'pass') {
     return <span className="win95-badge win95-badge--pass">Pass</span>
   }
-  if (status === 'fail') {
-    return <span className="win95-badge win95-badge--fail">Fail</span>
-  }
-  return <span className="win95-badge win95-badge--muted">Not configured</span>
+  return <span className="win95-badge win95-badge--fail">Fail</span>
 }
 
 export function AdminStatusPage() {
@@ -48,8 +45,8 @@ export function AdminStatusPage() {
       <Frame display="flex" flexDirection="column" gap="$4">
         <h2 style={{ margin: 0, fontSize: 18 }}>System status</h2>
         <p className="win95-muted" style={{ margin: 0, fontSize: 13 }}>
-          Read-only checks for Supabase and optional HTTP endpoints. Results
-          stay in this browser session until you run checks again.
+          Read-only checks for Supabase connectivity. Results stay in this
+          browser session until you run checks again.
         </p>
       </Frame>
 

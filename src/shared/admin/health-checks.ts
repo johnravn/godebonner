@@ -1,6 +1,6 @@
 import { hasSupabaseBrowserConfig, supabase } from '#/shared/api/supabase'
 
-export type CheckStatus = 'pass' | 'fail' | 'skip'
+export type CheckStatus = 'pass' | 'fail'
 
 export type HealthCheckResult = {
   id: string
@@ -10,47 +10,10 @@ export type HealthCheckResult = {
   durationMs?: number
 }
 
-function parseStatusUrls(): string[] {
-  const raw = (import.meta.env.VITE_ADMIN_STATUS_URLS as string | undefined)?.trim()
-  if (!raw) return []
-  return raw
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean)
-}
-
 async function timed<T>(fn: () => Promise<T>): Promise<{ ms: number; result: T }> {
   const start = performance.now()
   const result = await fn()
   return { ms: Math.round(performance.now() - start), result }
-}
-
-async function pingUrl(url: string): Promise<{ ok: boolean; status?: number; message: string }> {
-  const controller = new AbortController()
-  const timeout = window.setTimeout(() => controller.abort(), 8000)
-  try {
-    const res = await fetch(url, {
-      method: 'GET',
-      signal: controller.signal,
-      cache: 'no-store',
-      credentials: 'omit',
-    })
-    return {
-      ok: res.ok,
-      status: res.status,
-      message: res.ok ? `HTTP ${res.status}` : `HTTP ${res.status} ${res.statusText}`.trim(),
-    }
-  } catch (e) {
-    const name =
-      e instanceof Error && e.name === 'AbortError'
-        ? 'Timeout (8s)'
-        : e instanceof Error
-          ? e.message
-          : 'Request failed'
-    return { ok: false, message: name }
-  } finally {
-    clearTimeout(timeout)
-  }
 }
 
 export async function runHealthChecks(): Promise<{
@@ -161,29 +124,6 @@ export async function runHealthChecks(): Promise<{
           return 'Unknown database error'
         })(),
         durationMs: rpcTimed.ms + fallbackTimed.ms,
-      })
-    }
-  }
-
-  const urls = parseStatusUrls()
-  if (urls.length === 0) {
-    results.push({
-      id: 'external-apis',
-      label: 'Other endpoints (VITE_ADMIN_STATUS_URLS)',
-      status: 'skip',
-      detail: 'Not configured — add comma-separated HTTPS URLs to .env.local',
-    })
-  } else {
-    for (let i = 0; i < urls.length; i++) {
-      const url = urls[i]
-      const pingTimed = await timed(() => pingUrl(url))
-      const { ok, message } = pingTimed.result
-      results.push({
-        id: `external-${i}`,
-        label: `GET ${url}`,
-        status: ok ? 'pass' : 'fail',
-        detail: message,
-        durationMs: pingTimed.ms,
       })
     }
   }

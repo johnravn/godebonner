@@ -133,7 +133,7 @@ const WINDOW_META = {
     title: 'Kabal',
     icon: <Sol1 variant="16x16_4" />,
     width: 'auto',
-    minHeight: '120px',
+    minHeight: '480px',
     position: { x: 56, y: 32 },
   },
   recycle: {
@@ -903,7 +903,9 @@ export function Win95Desktop({
             minHeight={WINDOW_META['admin-welcome'].minHeight}
             defaultPosition={WINDOW_META['admin-welcome'].position}
           >
-            <AdminWelcomeTour />
+            <AdminWelcomeTour
+              onClose={() => closeWindow('admin-welcome')}
+            />
           </Win95Window>
         </>
       ) : null}

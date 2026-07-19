@@ -462,14 +462,16 @@ export function React95IconPicker({
               Eller lim inn emoji
             </label>
             <div className="win95-icon-picker-custom__emoji-row">
-              <Input
-                id={`${labelId}-emoji`}
-                value={emojiInput}
-                onChange={(e) => setEmojiInput(e.currentTarget.value)}
-                placeholder="☕"
-                aria-label="Emoji"
-                style={{ width: 72, textAlign: 'center', fontSize: 22 }}
-              />
+              <div className="win95-icon-picker-custom__emoji-input-wrap">
+                <Input
+                  id={`${labelId}-emoji`}
+                  value={emojiInput}
+                  onChange={(e) => setEmojiInput(e.currentTarget.value)}
+                  placeholder="☕"
+                  aria-label="Lim inn emoji"
+                  style={{ width: 72, textAlign: 'center', fontSize: 22 }}
+                />
+              </div>
               <Button
                 onClick={() => {
                   void prepareEmojiPreview(emojiInput, pixelate)
@@ -551,7 +553,7 @@ export function React95IconPicker({
                     alt=""
                     style={{ imageRendering: 'pixelated' }}
                   />
-                  <span>{pixelate ? 'Pikselert 64×64' : '64×64'}</span>
+                  <span>{pixelate ? 'Pikselert 48×48' : '48×48'}</span>
                 </div>
               ) : null}
             </div>

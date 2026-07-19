@@ -1,4 +1,4 @@
-import { Button, Frame } from '@react95/core'
+import { Frame } from '@react95/core'
 import { useEffect, useRef, useState } from 'react'
 import type {
   BoardConfig,
@@ -16,12 +16,13 @@ import {
   revealCell,
   toggleFlag,
 } from '#/features/home/minesweeper'
+import { Win95Select } from '#/shared/ui/Win95Select'
 
-const DIFFICULTY_LABELS: Record<Difficulty, string> = {
-  beginner: 'Nybegynner',
-  intermediate: 'Middels',
-  expert: 'Ekspert',
-}
+const DIFFICULTY_OPTIONS = [
+  { value: 'beginner', label: 'Nybegynner' },
+  { value: 'intermediate', label: 'Middels' },
+  { value: 'expert', label: 'Ekspert' },
+] as const
 
 function formatCounter(n: number) {
   const clamped = Math.max(-99, Math.min(999, n))
@@ -149,22 +150,14 @@ export function MinesweeperWindow() {
 
   return (
     <Frame display="flex" flexDirection="column" gap="$2" className="minesweeper">
-      <Frame display="flex" gap="$1" flexWrap="wrap">
-        {(Object.keys(DIFFICULTIES) as Difficulty[]).map((key) => (
-          <Button
-            key={key}
-            onClick={() => reset(key)}
-            style={{
-              fontSize: 12,
-              minHeight: 32,
-              paddingInline: 8,
-              fontWeight: difficulty === key ? 'bold' : 'normal',
-            }}
-          >
-            {DIFFICULTY_LABELS[key]}
-          </Button>
-        ))}
-      </Frame>
+      <div className="minesweeper-controls">
+        <Win95Select
+          aria-label="Vanskelighetsgrad"
+          value={difficulty}
+          options={[...DIFFICULTY_OPTIONS]}
+          onChange={(value) => reset(value as Difficulty)}
+        />
+      </div>
 
       <div className="minesweeper-hud">
         <div className="minesweeper-counter" aria-label="Miner igjen">
@@ -189,7 +182,7 @@ export function MinesweeperWindow() {
       <div
         className="minesweeper-board"
         style={{
-          gridTemplateColumns: `repeat(${config.cols}, 1fr)`,
+          gridTemplateColumns: `repeat(${config.cols}, auto)`,
         }}
         onContextMenu={(e) => e.preventDefault()}
       >

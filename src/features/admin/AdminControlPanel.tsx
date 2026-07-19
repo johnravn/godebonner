@@ -58,8 +58,7 @@ export function AdminControlPanel({ apps }: AdminControlPanelProps) {
         </div>
       </Frame>
       <p className="win95-muted" style={{ margin: 0, fontSize: 12, lineHeight: 1.4 }}>
-        Trenger du en gjennomgang? Åpne Velkomstomvisning fra Start-menyen eller
-        Kontrollpanelet.
+        Trenger du en gjennomgang? Åpne Velkomstomvisning fra Kontrollpanelet.
       </p>
       <Frame
         as="footer"

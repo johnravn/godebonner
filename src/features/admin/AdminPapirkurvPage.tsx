@@ -16,6 +16,14 @@ import {
 
 type RecycleBinRow = Tables<'recycle_bin_items'>
 
+function throwFieldErrors(
+  checks: Array<string | false | null | undefined>,
+): void {
+  const errors = checks.filter((c): c is string => typeof c === 'string')
+  if (errors.length === 0) return
+  throw new Error(errors.join(' '))
+}
+
 export function AdminPapirkurvPage() {
   const queryClient = useQueryClient()
   const [editOpen, setEditOpen] = useState(false)
@@ -65,15 +73,12 @@ export function AdminPapirkurvPage() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       const trimmedName = name.trim()
-      if (!trimmedName) {
-        throw new Error('Fyll inn et navn.')
-      }
-
       const order =
         typeof sortOrder === 'string' ? Number.parseInt(sortOrder, 10) : sortOrder
-      if (!Number.isFinite(order)) {
-        throw new Error('Sortering må være et tall.')
-      }
+      throwFieldErrors([
+        !trimmedName && 'Fyll inn navn.',
+        !Number.isFinite(order) && 'Sortering må være et tall.',
+      ])
 
       if (isEdit) {
         const patch: TablesUpdate<'recycle_bin_items'> = {
@@ -207,47 +212,70 @@ export function AdminPapirkurvPage() {
 
       <Win95Dialog
         open={editOpen}
-        onClose={() => setEditOpen(false)}
+        onClose={() => {
+          setEditOpen(false)
+          saveMutation.reset()
+        }}
         title={isEdit ? 'Rediger element' : 'Nytt element'}
-        width="480px"
-        minHeight="420px"
+        width="720px"
+        minHeight="360px"
       >
-        <div className="win95-field">
-          <label htmlFor="recycle-name">Navn</label>
-          <Input
-            id="recycle-name"
-            value={name}
-            onChange={(e) => setName(e.currentTarget.value)}
-            style={{ width: '100%' }}
-          />
+        <div className="win95-dialog-form-with-icon">
+          <div className="win95-dialog-form-with-icon__fields">
+            <div className="win95-field">
+              <label htmlFor="recycle-name">Navn</label>
+              <Input
+                id="recycle-name"
+                value={name}
+                onChange={(e) => setName(e.currentTarget.value)}
+                style={{ width: '100%' }}
+              />
+            </div>
+            <div className="win95-field" style={{ marginTop: 8 }}>
+              <label htmlFor="recycle-description">Beskrivelse (valgfritt)</label>
+              <Input
+                id="recycle-description"
+                value={description}
+                onChange={(e) => setDescription(e.currentTarget.value)}
+                style={{ width: '100%' }}
+              />
+            </div>
+            <div className="win95-field" style={{ marginTop: 8 }}>
+              <label htmlFor="recycle-sort">Sortering</label>
+              <Input
+                id="recycle-sort"
+                type="number"
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.currentTarget.value)}
+                style={{ width: '100%' }}
+              />
+            </div>
+          </div>
+          <div className="win95-dialog-form-with-icon__icon">
+            <React95IconPicker
+              value={icon}
+              onChange={setIcon}
+              labelId="recycle-icon-label"
+              defaultIcon={RECYCLE_BIN_DEFAULT_ICON}
+            />
+          </div>
         </div>
-        <div className="win95-field">
-          <label htmlFor="recycle-description">Beskrivelse (valgfritt)</label>
-          <Input
-            id="recycle-description"
-            value={description}
-            onChange={(e) => setDescription(e.currentTarget.value)}
-            style={{ width: '100%' }}
-          />
-        </div>
-        <React95IconPicker
-          value={icon}
-          onChange={setIcon}
-          labelId="recycle-icon-label"
-          defaultIcon={RECYCLE_BIN_DEFAULT_ICON}
-        />
-        <div className="win95-field">
-          <label htmlFor="recycle-sort">Sortering</label>
-          <Input
-            id="recycle-sort"
-            type="number"
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.currentTarget.value)}
-            style={{ width: '100%' }}
-          />
-        </div>
+        {saveMutation.isError ? (
+          <p className="win95-dialog-field-error" role="alert">
+            {saveMutation.error instanceof Error
+              ? saveMutation.error.message
+              : 'Noe gikk galt.'}
+          </p>
+        ) : null}
         <Frame display="flex" justifyContent="flex-end" gap="$2" mt="$2">
-          <Button onClick={() => setEditOpen(false)}>Avbryt</Button>
+          <Button
+            onClick={() => {
+              setEditOpen(false)
+              saveMutation.reset()
+            }}
+          >
+            Avbryt
+          </Button>
           <Button
             disabled={saveMutation.isPending}
             onClick={() => saveMutation.mutate()}

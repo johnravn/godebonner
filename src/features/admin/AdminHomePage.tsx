@@ -9,8 +9,7 @@ export function AdminHomePage() {
         papirkurv, brukere eller systemstatus.
       </p>
       <p className="win95-muted" style={{ margin: 0, fontSize: 13 }}>
-        Trenger du en gjennomgang? Åpne Velkomstomvisning fra Start-menyen eller
-        Kontrollpanelet.
+        Trenger du en gjennomgang? Åpne Velkomstomvisning fra Kontrollpanelet.
       </p>
     </Frame>
   )

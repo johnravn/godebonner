@@ -119,8 +119,10 @@ export function SolitaireWindow() {
     clearSelection()
   }
 
-  const wasteTop =
-    game.waste.length > 0 ? game.waste[game.waste.length - 1] : undefined
+  const wasteVisibleCount = Math.min(game.drawMode, game.waste.length)
+  const wasteVisible =
+    wasteVisibleCount > 0 ? game.waste.slice(-wasteVisibleCount) : []
+  const wasteFan = game.drawMode === 3
 
   return (
     <Frame display="flex" flexDirection="column" gap="$2" className="solitaire">
@@ -167,7 +169,11 @@ export function SolitaireWindow() {
               type="button"
               className="solitaire-stock"
               aria-label={
-                game.stock.length > 0 ? 'Trekk kort' : 'Bland om stokken'
+                game.stock.length > 0
+                  ? game.drawMode === 3
+                    ? 'Trekk 3 kort'
+                    : 'Trekk kort'
+                  : 'Bland om stokken'
               }
               onClick={onStockClick}
             >
@@ -177,28 +183,52 @@ export function SolitaireWindow() {
                 <div className="solitaire-slot solitaire-slot--recycle" />
               )}
             </button>
-            <div className="solitaire-waste">
-              {wasteTop ? (
-                <button
-                  type="button"
-                  className="solitaire-card-btn"
-                  aria-label={`${RANK_LABEL[wasteTop.rank]} ${SUIT_SYMBOL[wasteTop.suit]}`}
-                  onClick={() => selectOrMove({ type: 'waste' })}
-                  onDoubleClick={() => {
-                    const auto = tryAutoFoundation(game, { type: 'waste' })
-                    if (auto) {
-                      setGame(auto)
-                      clearSelection()
-                    }
-                  }}
-                >
-                  <CardFace
-                    card={wasteTop}
-                    selected={selection?.type === 'waste'}
-                  />
-                </button>
-              ) : (
+            <div
+              className={`solitaire-waste${wasteFan ? ' solitaire-waste--draw3' : ''}`}
+            >
+              {wasteVisible.length === 0 ? (
                 <EmptySlot label="Avfall" onClick={clearSelection} />
+              ) : (
+                wasteVisible.map((card, index) => {
+                  const isTop = index === wasteVisible.length - 1
+                  const face = (
+                    <CardFace
+                      card={card}
+                      selected={isTop && selection?.type === 'waste'}
+                    />
+                  )
+                  if (!isTop) {
+                    return (
+                      <div
+                        key={card.id}
+                        className="solitaire-waste__card"
+                        style={{ left: index * 16 }}
+                        aria-hidden
+                      >
+                        {face}
+                      </div>
+                    )
+                  }
+                  return (
+                    <button
+                      key={card.id}
+                      type="button"
+                      className="solitaire-card-btn solitaire-waste__card"
+                      style={{ left: index * 16 }}
+                      aria-label={`${RANK_LABEL[card.rank]} ${SUIT_SYMBOL[card.suit]}`}
+                      onClick={() => selectOrMove({ type: 'waste' })}
+                      onDoubleClick={() => {
+                        const auto = tryAutoFoundation(game, { type: 'waste' })
+                        if (auto) {
+                          setGame(auto)
+                          clearSelection()
+                        }
+                      }}
+                    >
+                      {face}
+                    </button>
+                  )
+                })
               )}
             </div>
           </div>

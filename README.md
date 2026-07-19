@@ -55,7 +55,6 @@ App runs at [http://localhost:3000](http://localhost:3000). The Vite app is loca
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | Godebonner publishable (public) API key |
 | `VITE_SUPABASE_ANON_KEY` | *(optional legacy)* Same role as publishable key; used if `VITE_SUPABASE_PUBLISHABLE_KEY` is unset |
 | `SUPABASE_PROJECT_REF` | Godebonner project ref (`inkuubqwtzutaxaimjoc`) for `supabase link` / `db:push` |
-| `VITE_ADMIN_STATUS_URLS` | Optional comma-separated HTTPS URLs for the admin **System status** page (GET only, no credentials) |
 
 Copy `.env.example` to `.env.local` (gitignored). Never commit secrets. Never use Subb project credentials in this repo.
 

@@ -1,9 +1,9 @@
 /** Upload / pixelate constraints for custom icons. */
 export const ICON_UPLOAD_MAX_BYTES = 2 * 1024 * 1024 // 2 MB
 export const ICON_UPLOAD_MAX_DIMENSION = 2048
-export const ICON_OUTPUT_SIZE = 64
+export const ICON_OUTPUT_SIZE = 48
 /** Internal render size before nearest-neighbor downscale (emoji path). */
-export const EMOJI_RENDER_SIZE = 256
+export const EMOJI_RENDER_SIZE = 192
 /** Max grapheme clusters allowed as an emoji icon source. */
 export const EMOJI_MAX_GRAPHEMES = 4
 
@@ -203,7 +203,7 @@ function renderEmojiSourceCanvas(emoji: string): HTMLCanvasElement {
 }
 
 /**
- * Validate and convert an uploaded image to a 64×64 PNG icon.
+ * Validate and convert an uploaded image to a 48×48 PNG icon.
  * With pixelate: nearest-neighbor + 16-color palette.
  * Without: smooth center-crop scale.
  */
@@ -263,7 +263,7 @@ export async function processIconUpload(
 }
 
 /**
- * Rasterize an emoji to a 64×64 PNG icon.
+ * Rasterize an emoji to a 48×48 PNG icon.
  * With pixelate: large render → nearest-neighbor downscale → 16-color palette.
  * Without: draw at output size with font smoothing.
  */
