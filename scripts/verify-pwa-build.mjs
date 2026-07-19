@@ -9,8 +9,9 @@ import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const candidates = [
-  path.join(root, 'dist', 'client', 'sw.js'),
+  path.join(root, '.vercel', 'output', 'static', 'sw.js'),
   path.join(root, '.output', 'public', 'sw.js'),
+  path.join(root, 'dist', 'client', 'sw.js'),
 ]
 
 const found = candidates.find((file) => fs.existsSync(file))

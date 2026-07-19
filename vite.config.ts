@@ -3,6 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Plugin } from 'vite'
 import { defineConfig } from 'vite'
+import { nitro } from 'nitro/vite'
 import { devtools } from '@tanstack/devtools-vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
@@ -237,12 +238,14 @@ const config = defineConfig({
         enabled: true,
       },
     }),
+    // Required for Vercel (and other hosts): emits .vercel/output Build Output API.
+    nitro(),
     viteReact(),
     VitePWA({
       registerType: 'prompt',
       injectRegister: false,
       strategies: 'generateSW',
-      // TanStack Start client assets land in dist/client (not .output/public in this setup)
+      // Intermediate dir; scripts/generate-sw.mjs rewrites into Nitro public output.
       outDir: 'dist/client',
       integration: {
         // Run before Nitro collects public assets (TanStack Start multi-env build)

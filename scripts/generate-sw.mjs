@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Post-build Workbox generateSW against dist/client.
+ * Post-build Workbox generateSW against the Nitro / Vite public output.
  * vite-plugin-pwa often runs before TanStack Start finishes writing assets;
- * this pass guarantees JS/CSS + shell are precached.
+ * this pass guarantees JS/CSS + shell are precached in the deployable folder.
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -10,10 +10,21 @@ import { fileURLToPath } from 'node:url'
 import { generateSW } from 'workbox-build'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const clientDir = path.join(root, 'dist', 'client')
 
-if (!fs.existsSync(clientDir)) {
-  console.error('[generate-sw] Missing dist/client — run vite build first')
+/** Prefer Nitro deploy outputs, then legacy dist/client. */
+const clientDirCandidates = [
+  path.join(root, '.vercel', 'output', 'static'),
+  path.join(root, '.output', 'public'),
+  path.join(root, 'dist', 'client'),
+]
+
+const clientDir = clientDirCandidates.find((dir) => fs.existsSync(dir))
+
+if (!clientDir) {
+  console.error(
+    '[generate-sw] Missing public output. Expected one of:\n' +
+      clientDirCandidates.map((c) => `  - ${path.relative(root, c)}`).join('\n'),
+  )
   process.exit(1)
 }
 
@@ -57,5 +68,5 @@ for (const warning of warnings) {
 }
 
 console.log(
-  `[generate-sw] Precached ${count} files (${(size / 1024).toFixed(1)} KiB)`,
+  `[generate-sw] Precached ${count} files (${(size / 1024).toFixed(1)} KiB) → ${path.relative(root, clientDir)}`,
 )
