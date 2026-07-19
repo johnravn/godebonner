@@ -19,6 +19,7 @@ import type {
   InstallDismissal,
   InstallSurface,
 } from '#/shared/pwa/install-state'
+import { useIosStandaloneViewportFix } from '#/shared/pwa/useIosStandaloneViewportFix'
 import { useOnlineStatus } from '#/shared/pwa/useOnlineStatus'
 import { useStandaloneDisplay } from '#/shared/pwa/useStandaloneDisplay'
 
@@ -95,6 +96,7 @@ export function PwaProvider({ children }: { children: ReactNode }) {
   const { user, loading: authLoading } = useAuth()
   const online = useOnlineStatus()
   const standalone = useStandaloneDisplay()
+  useIosStandaloneViewportFix(standalone)
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null)
   const [dismissal, setDismissal] = useState<InstallDismissal>(null)

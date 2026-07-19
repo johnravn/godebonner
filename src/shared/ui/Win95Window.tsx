@@ -199,8 +199,10 @@ export function Win95Window({
 
   if (!open) return null
 
+  const fitContent = width === 'auto'
   const windowClassName = [
     'win95-window--responsive',
+    fitContent ? 'win95-window--fit-content' : null,
     isMaximized ? 'win95-window--maximized' : null,
     className,
   ]
@@ -225,7 +227,13 @@ export function Win95Window({
       }}
     >
       <Modal.Content
-        className={['win95-window-content', className].filter(Boolean).join(' ')}
+        className={[
+          'win95-window-content',
+          fitContent ? 'win95-window--fit-content' : null,
+          className,
+        ]
+          .filter(Boolean)
+          .join(' ')}
         width={isMaximized ? '100%' : width}
         height={isMaximized ? '100%' : height}
         minHeight={isMaximized ? 0 : minHeight}

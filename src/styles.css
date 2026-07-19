@@ -7,6 +7,7 @@ html,
 body {
   margin: 0;
   min-height: 100dvh;
+  min-height: -webkit-fill-available;
   background-color: var(--win95-desktop);
   color: var(--r95-color-materialText, #000000);
   -webkit-tap-highlight-color: transparent;
@@ -2556,6 +2557,13 @@ button.win95-icon-btn[class*='r95_'] img {
     ) !important;
   }
 
+  /* Auto-width apps (minesweeper, kabal) stay sized to their board. */
+  .win95-window--responsive:not(.win95-window--maximized)
+    .win95-window-content.win95-window--fit-content {
+    width: max-content !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+
   .win95-window-content.win95-window--admin {
     max-height: calc(
       100dvh - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
@@ -2613,6 +2621,14 @@ button.win95-icon-btn[class*='r95_'] img {
         100dvh - 56px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
       ),
       var(--win95-vv-max-height, 100dvh)
+    ) !important;
+  }
+
+  .win95-window--responsive:not(.win95-window--maximized)
+    .win95-window-content.win95-window--fit-content {
+    width: max-content !important;
+    max-width: calc(
+      100vw - 16px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)
     ) !important;
   }
 
@@ -2849,6 +2865,11 @@ button.win95-icon-btn[class*='r95_'] img {
   html,
   body {
     overscroll-behavior: none;
+    /*
+     * Cold-start layout viewport can sit short of the physical bottom; teal
+     * body would show as a strip under the taskbar until rotate. Match chrome.
+     */
+    background-color: var(--r95-color-material, #c0c0c0);
   }
 
   .win95-desktop-surface {
@@ -2859,4 +2880,40 @@ button.win95-icon-btn[class*='r95_'] img {
   .win95-desktop-icons {
     top: calc(12px + env(safe-area-inset-top, 0px));
   }
+
+  /*
+   * Extend taskbar paint below itself so any gap under fixed bottom:0 is
+   * still grey chrome, not desktop teal.
+   */
+  .win95-taskbar::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: 50vh;
+    background-color: var(--r95-color-material, #c0c0c0);
+    pointer-events: none;
+  }
+}
+
+/*
+ * JS class mirrors display-mode for older iOS. Body/taskbar paint rules above
+ * already cover the cold-start teal strip via the media query; this keeps the
+ * same chrome colour when only navigator.standalone is true.
+ */
+html.win95-pwa-standalone,
+html.win95-pwa-standalone body {
+  background-color: var(--r95-color-material, #c0c0c0);
+}
+
+html.win95-pwa-standalone .win95-taskbar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 50vh;
+  background-color: var(--r95-color-material, #c0c0c0);
+  pointer-events: none;
 }
