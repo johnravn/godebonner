@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 /**
- * Generate square PWA / Apple touch icons from the brand circle logo.
+ * Generate square PWA / Apple touch icons from the filled brand circle logo.
  * Requires ImageMagick (`magick` or `convert`) on PATH.
+ *
+ * iPhone uses only apple-touch-icon (not the web manifest), so that asset must
+ * be opaque PNG24, tightly cropped, and large enough to read on the home screen.
  */
 import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
@@ -11,7 +14,8 @@ import { fileURLToPath } from 'node:url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
 const publicDir = path.join(root, 'public')
-const source = path.join(publicDir, 'godebonner_sirkel_v3.png')
+/** Filled tan circle — line-art-only sirkel_v3.png is nearly invisible on teal. */
+const source = path.join(publicDir, 'godebonner_sirkel_v3_oransje.png')
 const teal = '#008080'
 
 function findMagickBin() {
@@ -30,6 +34,37 @@ function run(bin, args) {
       `Icon generation failed (${bin} ${args.join(' ')}):\n${result.stderr || result.stdout}`,
     )
   }
+}
+
+/**
+ * Solid teal canvas + trimmed logo centered. PNG24 / no alpha (iOS fills
+ * transparency with black).
+ * @param {string} bin
+ * @param {number} canvas
+ * @param {number} logo — logo diameter in px (after trim)
+ * @param {string} out
+ */
+function writeIcon(bin, canvas, logo, out) {
+  run(bin, [
+    '-size',
+    `${canvas}x${canvas}`,
+    `xc:${teal}`,
+    '(',
+    source,
+    '-trim',
+    '+repage',
+    '-resize',
+    `${logo}x${logo}`,
+    ')',
+    '-gravity',
+    'center',
+    '-compose',
+    'over',
+    '-composite',
+    '-alpha',
+    'off',
+    `PNG24:${out}`,
+  ])
 }
 
 function main() {
@@ -51,59 +86,13 @@ function main() {
     apple180: path.join(publicDir, 'apple-touch-icon.png'),
   }
 
-  run(bin, [
-    source,
-    '-resize',
-    '192x192',
-    '-background',
-    teal,
-    '-gravity',
-    'center',
-    '-extent',
-    '192x192',
-    outs.any192,
-  ])
-  run(bin, [
-    source,
-    '-resize',
-    '512x512',
-    '-background',
-    teal,
-    '-gravity',
-    'center',
-    '-extent',
-    '512x512',
-    outs.any512,
-  ])
+  // "any" / Apple: fill most of the square (iOS applies its own mask)
+  writeIcon(bin, 192, 168, outs.any192)
+  writeIcon(bin, 512, 448, outs.any512)
+  writeIcon(bin, 180, 162, outs.apple180)
 
-  // Maskable: ~60% safe zone with teal padding (Android adaptive icons)
-  run(bin, [
-    '-size',
-    '512x512',
-    `xc:${teal}`,
-    '(',
-    source,
-    '-resize',
-    '307x307',
-    ')',
-    '-gravity',
-    'center',
-    '-composite',
-    outs.maskable512,
-  ])
-
-  run(bin, [
-    source,
-    '-resize',
-    '180x180',
-    '-background',
-    teal,
-    '-gravity',
-    'center',
-    '-extent',
-    '180x180',
-    outs.apple180,
-  ])
+  // Maskable: ~60% safe zone for Android adaptive icons
+  writeIcon(bin, 512, 307, outs.maskable512)
 
   console.log('Generated PWA icons:')
   for (const file of Object.values(outs)) {

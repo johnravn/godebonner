@@ -58,6 +58,12 @@ export const Route = createRootRouteWithContext<{
         rel: 'icon',
         href: '/favicon.ico',
       },
+      // iOS ignores web-manifest icons; apple-touch-icon is what the home screen uses.
+      // Link both with and without sizes — Safari is picky across versions.
+      {
+        rel: 'apple-touch-icon',
+        href: '/apple-touch-icon.png',
+      },
       {
         rel: 'apple-touch-icon',
         href: '/apple-touch-icon.png',

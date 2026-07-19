@@ -108,7 +108,7 @@ select[class*='r95_'] {
   color: var(--r95-color-materialText, #000000);
   overflow: hidden;
   overscroll-behavior: none;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* Top inset only — bottom safe area is filled by the taskbar chrome */
   padding-top: env(safe-area-inset-top, 0px);
   user-select: none;
   -webkit-user-select: none;
@@ -125,7 +125,8 @@ select[class*='r95_'] {
 
 .win95-desktop-icons {
   position: absolute;
-  top: 8px;
+  /* Absolute top ignores parent padding — include safe-area so icons clear the iPhone clock */
+  top: calc(8px + env(safe-area-inset-top, 0px));
   left: 8px;
   bottom: calc(36px + env(safe-area-inset-bottom, 0px));
   display: flex;
@@ -2641,6 +2642,18 @@ button.win95-icon-btn[class*='r95_'] img {
 }
 
 /*
+ * iOS PWA (viewport-fit=cover): keep the bar flush with the screen bottom and
+ * absorb the home-indicator inset as padding so chrome — not the desktop —
+ * fills the gap.
+ */
+.win95-taskbar {
+  bottom: 0 !important;
+  padding-bottom: calc(
+    var(--r95-space-2, 2px) + env(safe-area-inset-bottom, 0px)
+  ) !important;
+}
+
+/*
  * React95 hardcodes the Start menu wrapper at bottom:28px (default taskbar
  * height). Our touch taskbar is taller, so pin the menu flush above it.
  */
@@ -2702,7 +2715,8 @@ button.win95-icon-btn[class*='r95_'] img {
   .win95-taskbar {
     min-height: 44px !important;
     height: auto !important;
-    padding-block: 6px !important;
+    padding-top: 6px !important;
+    padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)) !important;
     padding-inline: max(8px, env(safe-area-inset-left, 0px))
       max(8px, env(safe-area-inset-right, 0px)) !important;
   }
@@ -2839,5 +2853,10 @@ button.win95-icon-btn[class*='r95_'] img {
 
   .win95-desktop-surface {
     overscroll-behavior: none;
+  }
+
+  /* Extra gap below status bar / Dynamic Island on installed iOS PWAs */
+  .win95-desktop-icons {
+    top: calc(12px + env(safe-area-inset-top, 0px));
   }
 }
