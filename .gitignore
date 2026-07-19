@@ -4,6 +4,9 @@ dist
 dist-ssr
 *.local
 .env
+.env.local
+.env.local.db
+.env.remote.db
 .nitro
 .tanstack
 .wrangler
@@ -11,3 +14,9 @@ dist-ssr
 .vinxi
 __unconfig*
 todos.json
+public/react95-icons
+coverage
+playwright-report
+test-results
+blob-report
+

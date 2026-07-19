@@ -1,0 +1,33 @@
+---
+description: Testing standards for Godebonner (Vitest, DB/RLS, Playwright)
+globs: "**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# Testing
+
+Follow [docs/TESTING.md](docs/TESTING.md). Summary for agents:
+
+## Where tests go
+
+- Pure logic → colocated `*.test.ts` next to the module
+- React UI → `*.test.tsx` with Testing Library + `renderWithProviders` from `#/test/test-utils`
+- Migrations / SECURITY DEFINER / RLS → `tests/db/**/*.test.ts` in the **same PR**
+- P0 user journeys only → `e2e/**/*.spec.ts`
+
+## Rules
+
+- Prefer unit tests for new pure helpers over brittle full-page UI tests
+- Mock Supabase with `createRpcMock` / `vi.mock('#/shared/api/supabase')` — never hit the **remote** production project from automated tests
+- Do not mock away the behavior under test
+- When asserting UI copy, match existing Norwegian strings in the component
+- Local Supabase (`supabase start` / `db reset`) is **test/CI only**; day-to-day app work stays remote-first
+- After changing `normalize_member_phone` or coupon RPCs, update TS phone tests and DB parity/RPC cases
+- Skip E2E for minesweeper/solitaire engines if unit tests cover them; a “window opens” smoke is enough if needed
+
+## Commands
+
+- `npm run test` — unit + component
+- `npm run test:db` — local Supabase required
+- `npm run test:e2e` — Playwright
+- `npm run test:coverage` — thresholds on pure modules

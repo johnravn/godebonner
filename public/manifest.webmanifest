@@ -1,0 +1,36 @@
+{
+  "id": "/",
+  "name": "Godebonner",
+  "short_name": "Godebonner",
+  "description": "Slå opp gratiskuponger med telefonnummer",
+  "lang": "no",
+  "dir": "ltr",
+  "theme_color": "#008080",
+  "background_color": "#008080",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "scope": "/",
+  "start_url": "/?source=pwa",
+  "categories": ["food", "lifestyle"],
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

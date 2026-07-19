@@ -9,12 +9,30 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AboutRouteImport } from './routes/about'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AccountRouteImport } from './routes/account'
+import { Route as AdminRouteRouteImport } from './routes/_admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin/index'
+import { Route as AdminAdminUsersRouteImport } from './routes/_admin/admin/users'
+import { Route as AdminAdminStatusRouteImport } from './routes/_admin/admin/status'
+import { Route as AdminAdminPapirkurvRouteImport } from './routes/_admin/admin/papirkurv'
+import { Route as AdminAdminOrganizationRouteImport } from './routes/_admin/admin/organization'
+import { Route as AdminAdminMenyRouteImport } from './routes/_admin/admin/meny'
+import { Route as AdminAdminMembersRouteImport } from './routes/_admin/admin/members'
 
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/_admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -22,40 +40,148 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminUsersRoute = AdminAdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminStatusRoute = AdminAdminStatusRouteImport.update({
+  id: '/admin/status',
+  path: '/admin/status',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminPapirkurvRoute = AdminAdminPapirkurvRouteImport.update({
+  id: '/admin/papirkurv',
+  path: '/admin/papirkurv',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminOrganizationRoute = AdminAdminOrganizationRouteImport.update({
+  id: '/admin/organization',
+  path: '/admin/organization',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminMenyRoute = AdminAdminMenyRouteImport.update({
+  id: '/admin/meny',
+  path: '/admin/meny',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAdminMembersRoute = AdminAdminMembersRouteImport.update({
+  id: '/admin/members',
+  path: '/admin/members',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/account': typeof AccountRoute
+  '/login': typeof LoginRoute
+  '/admin/members': typeof AdminAdminMembersRoute
+  '/admin/meny': typeof AdminAdminMenyRoute
+  '/admin/organization': typeof AdminAdminOrganizationRoute
+  '/admin/papirkurv': typeof AdminAdminPapirkurvRoute
+  '/admin/status': typeof AdminAdminStatusRoute
+  '/admin/users': typeof AdminAdminUsersRoute
+  '/admin/': typeof AdminAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/account': typeof AccountRoute
+  '/login': typeof LoginRoute
+  '/admin/members': typeof AdminAdminMembersRoute
+  '/admin/meny': typeof AdminAdminMenyRoute
+  '/admin/organization': typeof AdminAdminOrganizationRoute
+  '/admin/papirkurv': typeof AdminAdminPapirkurvRoute
+  '/admin/status': typeof AdminAdminStatusRoute
+  '/admin/users': typeof AdminAdminUsersRoute
+  '/admin': typeof AdminAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/_admin': typeof AdminRouteRouteWithChildren
+  '/account': typeof AccountRoute
+  '/login': typeof LoginRoute
+  '/_admin/admin/members': typeof AdminAdminMembersRoute
+  '/_admin/admin/meny': typeof AdminAdminMenyRoute
+  '/_admin/admin/organization': typeof AdminAdminOrganizationRoute
+  '/_admin/admin/papirkurv': typeof AdminAdminPapirkurvRoute
+  '/_admin/admin/status': typeof AdminAdminStatusRoute
+  '/_admin/admin/users': typeof AdminAdminUsersRoute
+  '/_admin/admin/': typeof AdminAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths:
+    | '/'
+    | '/account'
+    | '/login'
+    | '/admin/members'
+    | '/admin/meny'
+    | '/admin/organization'
+    | '/admin/papirkurv'
+    | '/admin/status'
+    | '/admin/users'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to:
+    | '/'
+    | '/account'
+    | '/login'
+    | '/admin/members'
+    | '/admin/meny'
+    | '/admin/organization'
+    | '/admin/papirkurv'
+    | '/admin/status'
+    | '/admin/users'
+    | '/admin'
+  id:
+    | '__root__'
+    | '/'
+    | '/_admin'
+    | '/account'
+    | '/login'
+    | '/_admin/admin/members'
+    | '/_admin/admin/meny'
+    | '/_admin/admin/organization'
+    | '/_admin/admin/papirkurv'
+    | '/_admin/admin/status'
+    | '/_admin/admin/users'
+    | '/_admin/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  AccountRoute: typeof AccountRoute
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_admin': {
+      id: '/_admin'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AdminRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -65,12 +191,87 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_admin/admin/': {
+      id: '/_admin/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminAdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/users': {
+      id: '/_admin/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminAdminUsersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/status': {
+      id: '/_admin/admin/status'
+      path: '/admin/status'
+      fullPath: '/admin/status'
+      preLoaderRoute: typeof AdminAdminStatusRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/papirkurv': {
+      id: '/_admin/admin/papirkurv'
+      path: '/admin/papirkurv'
+      fullPath: '/admin/papirkurv'
+      preLoaderRoute: typeof AdminAdminPapirkurvRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/organization': {
+      id: '/_admin/admin/organization'
+      path: '/admin/organization'
+      fullPath: '/admin/organization'
+      preLoaderRoute: typeof AdminAdminOrganizationRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/meny': {
+      id: '/_admin/admin/meny'
+      path: '/admin/meny'
+      fullPath: '/admin/meny'
+      preLoaderRoute: typeof AdminAdminMenyRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/admin/members': {
+      id: '/_admin/admin/members'
+      path: '/admin/members'
+      fullPath: '/admin/members'
+      preLoaderRoute: typeof AdminAdminMembersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
+interface AdminRouteRouteChildren {
+  AdminAdminMembersRoute: typeof AdminAdminMembersRoute
+  AdminAdminMenyRoute: typeof AdminAdminMenyRoute
+  AdminAdminOrganizationRoute: typeof AdminAdminOrganizationRoute
+  AdminAdminPapirkurvRoute: typeof AdminAdminPapirkurvRoute
+  AdminAdminStatusRoute: typeof AdminAdminStatusRoute
+  AdminAdminUsersRoute: typeof AdminAdminUsersRoute
+  AdminAdminIndexRoute: typeof AdminAdminIndexRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAdminMembersRoute: AdminAdminMembersRoute,
+  AdminAdminMenyRoute: AdminAdminMenyRoute,
+  AdminAdminOrganizationRoute: AdminAdminOrganizationRoute,
+  AdminAdminPapirkurvRoute: AdminAdminPapirkurvRoute,
+  AdminAdminStatusRoute: AdminAdminStatusRoute,
+  AdminAdminUsersRoute: AdminAdminUsersRoute,
+  AdminAdminIndexRoute: AdminAdminIndexRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
+  AccountRoute: AccountRoute,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

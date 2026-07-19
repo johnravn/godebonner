@@ -1,261 +1,2742 @@
-
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap");
-@import "tailwindcss";
-@plugin "@tailwindcss/typography";
-
-@theme {
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
-}
-
 :root {
-  --sea-ink: #173a40;
-  --sea-ink-soft: #416166;
-  --lagoon: #4fb8b2;
-  --lagoon-deep: #328f97;
-  --palm: #2f6a4a;
-  --sand: #e7f0e8;
-  --foam: #f3faf5;
-  --surface: rgba(255, 255, 255, 0.74);
-  --surface-strong: rgba(255, 255, 255, 0.9);
-  --line: rgba(23, 58, 64, 0.14);
-  --inset-glint: rgba(255, 255, 255, 0.82);
-  --kicker: rgba(47, 106, 74, 0.9);
-  --bg-base: #e7f3ec;
-  --header-bg: rgba(251, 255, 248, 0.84);
-  --chip-bg: rgba(255, 255, 255, 0.8);
-  --chip-line: rgba(47, 106, 74, 0.18);
-  --link-bg-hover: rgba(255, 255, 255, 0.9);
-  --hero-a: rgba(79, 184, 178, 0.36);
-  --hero-b: rgba(47, 106, 74, 0.2);
-}
-
-:root[data-theme="dark"] {
-  --sea-ink: #d7ece8;
-  --sea-ink-soft: #afcdc8;
-  --lagoon: #60d7cf;
-  --lagoon-deep: #8de5db;
-  --palm: #6ec89a;
-  --sand: #0f1a1e;
-  --foam: #101d22;
-  --surface: rgba(16, 30, 34, 0.8);
-  --surface-strong: rgba(15, 27, 31, 0.92);
-  --line: rgba(141, 229, 219, 0.18);
-  --inset-glint: rgba(194, 247, 238, 0.14);
-  --kicker: #b8efe5;
-  --bg-base: #0a1418;
-  --header-bg: rgba(10, 20, 24, 0.8);
-  --chip-bg: rgba(13, 28, 32, 0.9);
-  --chip-line: rgba(141, 229, 219, 0.24);
-  --link-bg-hover: rgba(24, 44, 49, 0.8);
-  --hero-a: rgba(96, 215, 207, 0.18);
-  --hero-b: rgba(110, 200, 154, 0.12);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --sea-ink: #d7ece8;
-    --sea-ink-soft: #afcdc8;
-    --lagoon: #60d7cf;
-    --lagoon-deep: #8de5db;
-    --palm: #6ec89a;
-    --sand: #0f1a1e;
-    --foam: #101d22;
-    --surface: rgba(16, 30, 34, 0.8);
-    --surface-strong: rgba(15, 27, 31, 0.92);
-    --line: rgba(141, 229, 219, 0.18);
-    --inset-glint: rgba(194, 247, 238, 0.14);
-    --kicker: #b8efe5;
-    --bg-base: #0a1418;
-    --header-bg: rgba(10, 20, 24, 0.8);
-    --chip-bg: rgba(13, 28, 32, 0.9);
-    --chip-line: rgba(141, 229, 219, 0.24);
-    --link-bg-hover: rgba(24, 44, 49, 0.8);
-    --hero-a: rgba(96, 215, 207, 0.18);
-    --hero-b: rgba(110, 200, 154, 0.12);
-  }
-}
-
-* {
-  box-sizing: border-box;
+  color-scheme: light;
+  --win95-desktop: #008080;
 }
 
 html,
-body,
-#app {
-  min-height: 100%;
-}
-
 body {
   margin: 0;
-  color: var(--sea-ink);
-  font-family: var(--font-sans);
-  background-color: var(--bg-base);
-  background:
-    radial-gradient(1100px 620px at -8% -10%, var(--hero-a), transparent 58%),
-    radial-gradient(1050px 620px at 112% -12%, var(--hero-b), transparent 62%),
-    radial-gradient(720px 380px at 50% 115%, rgba(79, 184, 178, 0.1), transparent 68%),
-    linear-gradient(180deg, color-mix(in oklab, var(--sand) 68%, white) 0%, var(--foam) 44%, var(--bg-base) 100%);
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  min-height: 100dvh;
+  background-color: var(--win95-desktop);
+  color: var(--r95-color-materialText, #000000);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
 }
 
-body::before {
-  content: "";
+/* Large, touch-friendly controls */
+button[class*='r95_'] {
+  font-size: 15px;
+  min-height: 44px;
+  padding-block: 10px !important;
+  padding-inline: 16px !important;
+  touch-action: manipulation;
+}
+
+/*
+ * @react95/core Checkbox ships SVG data-URLs with raw quotes inside url('...'),
+ * so browsers drop the checkmark background. Restore it for the icon span.
+ */
+label:has(> input[type='checkbox']:checked:not(:disabled)) > span:first-of-type {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%227%22%20height%3D%228%22%3E%3Cpath%20d%3D%22M.014%201.897L0%205.905h.998l.015%201.084h.998v1.013h.984v-.999l.999.015.014-.885h.984V5.006h.999V3.994h.998L7.003%200l-.998.014v.999L5.006.998V2.14l-.998.015v.856l-.998.014v.984H1.997l-.014-.97-.985-.014L.984%201.91l-.97-.014z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+label:has(> input[type='checkbox']:checked:disabled) > span:first-of-type {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%227%22%20height%3D%228%22%3E%3Cpath%20fill%3D%22gray%22%20d%3D%22M.014%201.897L0%205.905h.998l.015%201.084h.998v1.013h.984v-.999l.999.015.014-.885h.984V5.006h.999V3.994h.998L7.003%200l-.998.014v.999L5.006.998V2.14l-.998.015v.856l-.998.014v.984H1.997l-.014-.97-.985-.014L.984%201.91l-.97-.014z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+/* Title bar minimize/close — keep visual chrome within the 20px bar */
+.draggable {
+  align-items: center !important;
+  overflow: hidden;
+}
+
+.draggable button[class*='r95_'] {
+  min-height: unset !important;
+  min-width: unset !important;
+  width: 17px !important;
+  height: 14px !important;
+  padding: 0 !important;
+  font-size: 10px !important;
+  touch-action: manipulation;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/*
+ * Expand title-bar control hit targets on touch without changing Win95 chrome.
+ * overflow:hidden on .draggable clips ::after, so allow overflow on touch and
+ * clip the title text alone instead.
+ */
+@media (pointer: coarse), (max-width: 64em) {
+  .draggable {
+    overflow: visible;
+  }
+
+  .draggable > div:not(:has(> button)) {
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .draggable > div:has(> button) {
+    position: relative;
+    z-index: 2;
+    overflow: visible;
+  }
+
+  .draggable button[class*='r95_']::after {
+    content: '';
+    position: absolute;
+    /* ~48×48 touch target around the 17×14 visual button */
+    inset: -17px -16px;
+  }
+}
+
+.draggable button[class*='r95_']:active {
+  padding: 0 !important;
+}
+
+.draggable button[class*='r95_'] img {
+  width: 14px !important;
+  height: 14px !important;
+  max-width: none;
+  display: block;
+}
+
+input[class*='r95_'],
+textarea[class*='r95_'],
+select[class*='r95_'] {
+  font-size: 16px;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.win95-desktop-surface {
   position: fixed;
   inset: 0;
+  background-color: var(--win95-desktop);
+  color: var(--r95-color-materialText, #000000);
+  overflow: hidden;
+  overscroll-behavior: none;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-top: env(safe-area-inset-top, 0px);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.win95-desktop-surface input,
+.win95-desktop-surface textarea,
+.win95-desktop-surface [contenteditable='true'],
+.win95-window-content,
+.win95-dialog-content {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.win95-desktop-icons {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  bottom: calc(36px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 0;
   pointer-events: none;
-  z-index: -1;
-  opacity: 0.28;
-  background:
-    radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.8), transparent 34%),
-    radial-gradient(circle at 78% 26%, rgba(79, 184, 178, 0.2), transparent 42%),
-    radial-gradient(circle at 42% 82%, rgba(47, 106, 74, 0.14), transparent 36%);
+  max-width: 96px;
 }
 
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0.14;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 28px 28px;
-  mask-image: radial-gradient(circle at 50% 30%, black, transparent 78%);
+.win95-desktop-icons__main,
+.win95-desktop-icons__recycle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: auto;
 }
 
-a {
-  color: var(--lagoon-deep);
-  text-decoration-color: rgba(50, 143, 151, 0.4);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
+.win95-desktop-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 76px;
+  padding: 4px 2px;
+  border: 1px dotted transparent;
+  background: transparent;
+  color: #fff;
+  cursor: default;
+  font: inherit;
+  font-size: 11px;
+  text-align: center;
+  text-shadow: 1px 1px 0 #000;
+  touch-action: manipulation;
+  user-select: none;
 }
 
-a:hover {
-  color: #246f76;
+.win95-desktop-icon__glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
 }
 
-code {
-  font-size: 0.9em;
-  border: 1px solid var(--line);
-  background: color-mix(in oklab, var(--surface-strong) 82%, white 18%);
-  border-radius: 7px;
-  padding: 2px 7px;
+.win95-desktop-icon__glyph img {
+  image-rendering: pixelated;
 }
 
-pre code {
+.win95-desktop-icon__label {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.win95-desktop-icon--selected {
+  border-color: #fff;
+}
+
+.win95-desktop-icon--selected .win95-desktop-icon__label {
+  background: var(--r95-color-anchor, #000e7a);
+}
+
+.win95-recycle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: min(360px, 50dvh);
+  overflow: auto;
+  padding: 4px;
+  box-shadow: var(--r95-shadow-in);
+  background: var(--r95-color-inputBackground, #fff);
+}
+
+.win95-recycle-list__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 4px;
+}
+
+.win95-recycle-list__item:hover {
+  background: var(--r95-color-anchor, #000e7a);
+  color: var(--r95-color-materialTextInvert, #fff);
+}
+
+.win95-recycle-list__text {
+  min-width: 0;
+  flex: 1;
+}
+
+.win95-recycle-list__name {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.win95-recycle-list__desc {
+  font-size: 12px;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+
+.win95-icon-picker-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 6px;
+}
+
+.win95-icon-picker-tabs__tab {
+  flex: 1;
+  padding: 4px 8px;
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  background: var(--r95-color-material, #c3c7cb);
+  box-shadow: var(--r95-shadow-out);
+}
+
+.win95-icon-picker-tabs__tab[aria-selected='true'] {
+  box-shadow: var(--r95-shadow-in);
+  font-weight: bold;
+}
+
+.win95-icon-picker-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.win95-icon-picker-toolbar {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.win95-icon-picker {
+  max-height: 280px;
+  overflow: auto;
+  padding: 6px;
+  box-shadow: var(--r95-shadow-in);
+  background: var(--r95-color-inputBackground, #fff);
+}
+
+.win95-icon-picker__section {
+  margin-bottom: 8px;
+}
+
+.win95-icon-picker__section:last-child {
+  margin-bottom: 0;
+}
+
+.win95-icon-picker__section-title {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 2px 4px;
+  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  background: var(--r95-color-material, #c3c7cb);
+  box-shadow: inset 0 -1px 0 #808080;
+}
+
+.win95-icon-picker__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 4px;
+}
+
+.win95-icon-picker__option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 4px;
   border: 0;
   background: transparent;
+  cursor: pointer;
+}
+
+.win95-icon-picker__option:hover,
+.win95-icon-picker__option:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -1px;
+}
+
+.win95-icon-picker__option[aria-pressed='true'] {
+  background: var(--r95-color-anchor, #000e7a);
+}
+
+.win95-icon-picker-custom__current {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  margin-bottom: 4px;
+  box-shadow: var(--r95-shadow-in);
+  background: var(--r95-color-inputBackground, #fff);
+}
+
+.win95-icon-picker-custom__file {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  background: var(--r95-color-material, #c3c7cb);
+  box-shadow: var(--r95-shadow-out);
+  font-size: 13px;
+  width: fit-content;
+}
+
+.win95-icon-picker-custom__emoji {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.win95-icon-picker-custom__emoji-label {
+  font-size: 12px;
+}
+
+.win95-icon-picker-custom__emoji-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.win95-icon-picker-custom__emoji-picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.win95-icon-picker-custom__emoji-pick {
+  width: 32px;
+  height: 32px;
   padding: 0;
-  border-radius: 0;
-  font-size: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  background: var(--r95-color-material, #c3c7cb);
+  box-shadow: var(--r95-shadow-out);
+  border: none;
+}
+
+.win95-icon-picker-custom__emoji-pick:hover,
+.win95-icon-picker-custom__emoji-pick:focus-visible {
+  background: var(--r95-color-headerBackground, #000080);
+}
+
+.win95-icon-picker-custom__emoji-original {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  font-size: 42px;
+  line-height: 1;
+}
+
+.win95-icon-picker-custom__file input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.win95-icon-picker-custom__previews {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.win95-icon-picker-custom__preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  box-shadow: var(--r95-shadow-in);
+  background: var(--r95-color-inputBackground, #fff);
+  font-size: 11px;
+}
+
+.win95-icon-picker-custom__preview img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.win95-icon-picker-custom__error {
+  margin: 4px 0 0;
+  color: #c00000;
+  font-size: 12px;
+}
+
+.win95-icon-picker-custom__actions {
+  margin-top: 6px;
+}
+
+.win95-icon-picker--library {
+  max-height: 160px;
+  margin-bottom: 8px;
+}
+
+.win95-icon-picker-custom__library {
+  margin-bottom: 8px;
+}
+
+.win95-icon-picker-custom__saved {
+  position: relative;
+}
+
+.win95-icon-picker-custom__delete {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  line-height: 1;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  background: var(--r95-color-material, #c3c7cb);
+  box-shadow: var(--r95-shadow-out);
+}
+
+.win95-icon-picker-custom__delete:hover,
+.win95-icon-picker-custom__delete:focus-visible {
+  background: #c00000;
+  color: #fff;
+}
+
+.win95-icon-picker-custom__delete:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.minesweeper {
+  width: max-content;
+  max-width: 100%;
+}
+
+.minesweeper-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 6px;
+  box-shadow: var(--r95-shadow-in);
+  background: var(--r95-color-material, #c3c7cb);
+}
+
+.minesweeper-counter {
+  min-width: 54px;
+  padding: 2px 4px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 22px;
+  font-weight: bold;
+  line-height: 1;
+  letter-spacing: 1px;
+  color: #f00;
+  background: #000;
+  box-shadow: var(--r95-shadow-in);
+  text-align: center;
+}
+
+.minesweeper-face {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  background: var(--r95-color-material, #c3c7cb);
+  box-shadow: var(--r95-shadow-out);
+  border: none;
+  touch-action: manipulation;
+}
+
+.minesweeper-face:active {
+  box-shadow: var(--r95-shadow-in);
+}
+
+.minesweeper-board {
+  display: grid;
+  gap: 0;
+  width: max-content;
+  max-width: 100%;
+  overflow: auto;
+  padding: 4px;
+  box-shadow: var(--r95-shadow-in);
+  background: var(--r95-color-material, #c3c7cb);
+}
+
+.minesweeper-cell {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  touch-action: manipulation;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.minesweeper-cell--hidden {
+  background: var(--r95-color-material, #c3c7cb);
+  box-shadow:
+    inset -1px -1px 0 #000,
+    inset 1px 1px 0 #fff,
+    inset -2px -2px 0 #868a8e,
+    inset 2px 2px 0 #dfdfdf;
+}
+
+.minesweeper-cell--hidden:active:not(.minesweeper-cell--flagged) {
+  box-shadow: inset 1px 1px 0 #868a8e;
+}
+
+.minesweeper-cell--revealed {
+  background: #bdbdbd;
+  box-shadow: inset 1px 1px 0 #868a8e;
+}
+
+.minesweeper-cell--mine-hit {
+  background: #f00;
+}
+
+.minesweeper-cell--n1 {
+  color: #0000ff;
+}
+.minesweeper-cell--n2 {
+  color: #008000;
+}
+.minesweeper-cell--n3 {
+  color: #ff0000;
+}
+.minesweeper-cell--n4 {
+  color: #000080;
+}
+.minesweeper-cell--n5 {
+  color: #800000;
+}
+.minesweeper-cell--n6 {
+  color: #008080;
+}
+.minesweeper-cell--n7 {
+  color: #000000;
+}
+.minesweeper-cell--n8 {
+  color: #808080;
+}
+
+@media (max-width: 40em) {
+  .minesweeper-cell {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    font-size: 13px;
+  }
+
+  .win95-desktop-icons {
+    max-width: 88px;
+  }
+}
+
+.solitaire {
+  width: max-content;
+  max-width: 100%;
+}
+
+.solitaire-win {
+  font-size: 13px;
+  font-weight: bold;
+  color: #008000;
+  margin-left: 4px;
+}
+
+.solitaire-felt {
+  padding: 8px;
+  background: #008000;
+  box-shadow: var(--r95-shadow-in);
+  overflow: auto;
+  max-width: min(640px, 100%);
+}
+
+.solitaire-row--top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.solitaire-stock-waste,
+.solitaire-foundations {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.solitaire-stock,
+.solitaire-card-btn {
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.solitaire-card,
+.solitaire-slot {
+  width: 52px;
+  height: 72px;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+
+.solitaire-slot {
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.12);
+  padding: 0;
+  cursor: pointer;
+}
+
+.solitaire-slot--recycle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.solitaire-slot--recycle::after {
+  content: '↺';
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 22px;
+}
+
+.solitaire-slot--selected,
+.solitaire-card--selected {
+  outline: 2px solid #ffff00;
+  outline-offset: 1px;
+}
+
+.solitaire-card--face {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 3px 4px;
+  background: #fff;
+  border: 1px solid #000;
+  color: #000;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+  user-select: none;
+}
+
+.solitaire-card--red {
+  color: #c00000;
+}
+
+.solitaire-card__suit {
+  align-self: center;
+  font-size: 20px;
+}
+
+.solitaire-card--back {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      #000080,
+      #000080 4px,
+      #0000a8 4px,
+      #0000a8 8px
+    );
+  border: 1px solid #000;
+  box-shadow: inset 0 0 0 3px #fff;
+}
+
+.solitaire-tableau {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  min-height: 220px;
+}
+
+.solitaire-tableau__pile {
+  position: relative;
+  width: 52px;
+  min-height: 72px;
+}
+
+.solitaire-tableau__card {
+  position: absolute;
+  left: 0;
+}
+
+@media (max-width: 40em) {
+  .solitaire-card,
+  .solitaire-slot {
+    width: 44px;
+    height: 62px;
+  }
+
+  .solitaire-tableau__pile {
+    width: 44px;
+  }
+
+  .solitaire-card__suit {
+    font-size: 16px;
+  }
+
+  .solitaire-felt {
+    max-width: 100%;
+  }
+}
+
+.win95-workspace {
+  background-color: var(--r95-color-material, #c3c7cb);
+}
+
+.win95-window-content.win95-window--admin {
+  max-height: calc(100dvh - 80px - env(safe-area-inset-top, 0px));
+}
+
+.win95-window-content.win95-window--members {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.win95-window-content.win95-window--members > * {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.win95-window-content.win95-window--meny {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.win95-window-content.win95-window--meny > * {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.win95-menu-tabs-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+}
+
+.win95-menu-tabs-shell > ol {
+  flex-shrink: 0;
+}
+
+.win95-menu-tabs-shell > div:last-child {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.win95-menu-tabs-shell > div:last-child > * {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Fixed body height so toolbar hover help does not shift the table/actions */
+.admin-members-help__body {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  height: 4.05em; /* 3 lines — longest help fits at normal width */
+  overflow: auto;
+}
+
+.admin-members-tabs {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+}
+
+.admin-members-tabs > ol {
+  flex-shrink: 0;
+}
+
+.admin-members-tabs > div:last-child {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.admin-members-tab {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.admin-members-import-log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-members-import-log__item {
+  padding: 8px 10px;
+  border-bottom: 1px solid #c0c0c0;
+}
+
+.admin-members-import-log__item:last-child {
+  border-bottom: none;
+}
+
+.admin-members-import-log__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+.admin-members-import-log__message {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.admin-members-import-log__stats {
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.win95-control-panel__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 12px 8px;
+  align-content: start;
+}
+
+.win95-control-panel__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 4px;
+  border: 1px dotted transparent;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  min-height: 88px;
+}
+
+.win95-control-panel__item:hover,
+.win95-control-panel__item:focus-visible {
+  border-color: var(--r95-color-materialText, #000);
+  outline: none;
+}
+
+.win95-control-panel__item--selected {
+  border-color: var(--r95-color-materialText, #000);
+}
+
+.win95-control-panel__item--selected .win95-control-panel__label {
+  background: var(--r95-color-headerBackground, #000080);
+  color: var(--r95-color-headerText, #fff);
+}
+
+.win95-control-panel__glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.win95-control-panel__glyph img {
+  image-rendering: pixelated;
+  display: block;
+}
+
+.win95-control-panel__label {
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.2;
+  padding: 1px 4px;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.win95-control-panel__status {
+  font-size: 12px;
+}
+
+.win95-register-results__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
   color: inherit;
 }
 
-.page-wrap {
-  width: min(1080px, calc(100% - 2rem));
-  margin-inline: auto;
+.win95-register-results__item:hover,
+.win95-register-results__item--active {
+  background: var(--r95-color-headerBackground, #000080);
+  color: var(--r95-color-headerText, #fff);
 }
 
-.display-title {
-  font-family: "Fraunces", Georgia, serif;
+.win95-register-results__item:hover .win95-muted,
+.win95-register-results__item--active .win95-muted {
+  color: inherit;
+  opacity: 0.85;
 }
 
-.island-shell {
-  border: 1px solid var(--line);
-  background: linear-gradient(165deg, var(--surface-strong), var(--surface));
-  box-shadow:
-    0 1px 0 var(--inset-glint) inset,
-    0 22px 44px rgba(30, 90, 72, 0.1),
-    0 6px 18px rgba(23, 58, 64, 0.08);
-  backdrop-filter: blur(4px);
+.win95-member-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 12px;
+  margin: 0;
+  font-size: 12px;
 }
 
-.feature-card {
-  background: linear-gradient(165deg, color-mix(in oklab, var(--surface-strong) 93%, white 7%), var(--surface));
-  box-shadow:
-    0 1px 0 var(--inset-glint) inset,
-    0 18px 34px rgba(30, 90, 72, 0.1),
-    0 4px 14px rgba(23, 58, 64, 0.06);
+.win95-member-facts dt {
+  margin: 0;
+  font-weight: bold;
 }
 
-.feature-card:hover {
-  transform: translateY(-2px);
-  border-color: color-mix(in oklab, var(--lagoon-deep) 35%, var(--line));
+.win95-member-facts dd {
+  margin: 0;
 }
 
-button,
-.island-shell,
+.win95-coupon-slots {
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.win95-coupon-slot {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-width: 110px;
+  min-height: 132px;
+  padding: 18px 12px;
+  box-sizing: border-box;
+  font-size: 16px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: var(--r95-shadow-out);
+  background: var(--r95-color-material, #c3c7cb);
+  border: none;
+  font-family: inherit;
+  color: inherit;
+}
+
+.win95-coupon-slot:hover:not(:disabled):not(.win95-coupon-slot--readonly) {
+  box-shadow: var(--r95-shadow-in);
+}
+
+.win95-coupon-slot:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.win95-coupon-slot--used {
+  opacity: 0.7;
+  box-shadow: var(--r95-shadow-in);
+}
+
+.win95-coupon-slot--readonly {
+  cursor: default;
+  pointer-events: none;
+}
+
+.win95-coupon-slot--readonly:hover {
+  box-shadow: var(--r95-shadow-out);
+}
+
+.win95-coupon-slot--readonly.win95-coupon-slot--used:hover {
+  box-shadow: var(--r95-shadow-in);
+}
+
+.win95-coupon-slot__check {
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.win95-coupon-slot__label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.win95-coupon-slot__title {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.win95-coupon-slot__meta {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+/* Scale React95 Checkbox (label + icon) inside the tile */
+.win95-coupon-slot label {
+  transform: scale(1.85);
+  transform-origin: center;
+  margin-block: 0;
+  height: 14px;
+  line-height: 1;
+  padding-left: 14px;
+}
+
+/* Larger React95 checkbox for form dialogs (e.g. Utsolgt) */
+.win95-checkbox-lg {
+  transform: scale(1.55);
+  transform-origin: left center;
+  margin-block: 10px;
+}
+
+.win95-coupon-slot label > span:last-child:empty {
+  display: none;
+}
+
+.win95-admin-tab-body {
+  padding-top: 8px;
+}
+
 a {
-  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease,
-    transform 180ms ease;
+  color: inherit;
 }
 
-.island-kicker {
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  font-weight: 700;
-  font-size: 0.69rem;
-  color: var(--kicker);
+a:hover {
+  text-decoration: underline;
 }
 
-.nav-link {
+.win95-page {
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.win95-page-narrow {
+  max-width: 420px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.win95-muted {
+  opacity: 0.75;
+}
+
+.win95-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.win95-field label {
+  font-size: 14px;
+}
+
+.win95-select {
   position: relative;
+  width: 100%;
+}
+
+.win95-select__trigger {
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  min-height: 28px;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.2;
+  color: var(--r95-color-materialText, #000);
+  background: var(--r95-color-inputBackground, #fff);
+  border: none;
+  border-left: 1px solid var(--r95-color-borderDark, #868a8e);
+  border-top: 1px solid var(--r95-color-borderDark, #868a8e);
+  border-radius: 0;
+  box-shadow:
+    inset -1px -1px 0 0 var(--r95-color-material, #c3c7cb),
+    inset 1px 1px 0 0 var(--r95-color-borderDarkest, #0a0a0a),
+    0.5px 0.5px 0 0.5px var(--r95-color-borderLightest, #fff);
+  cursor: default;
+  text-align: left;
+}
+
+.win95-select__trigger:focus-visible {
+  outline: 1px dotted var(--r95-color-borderDarkest, #0a0a0a);
+  outline-offset: -4px;
+}
+
+.win95-select__value {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 4px 6px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.win95-select__caret {
+  flex: 0 0 22px;
+  width: 22px;
+  margin: 1px 1px 1px 0;
+  background-color: var(--r95-color-material, #c3c7cb);
+  border-right: 1px solid var(--r95-color-borderDark, #868a8e);
+  border-bottom: 1px solid var(--r95-color-borderDark, #868a8e);
+  box-shadow:
+    inset 0.5px 0.7px 0 0.7px var(--r95-color-material, #c3c7cb),
+    inset -1px 0 0 1px var(--r95-color-borderDark, #868a8e),
+    inset 1.5px 1.5px 0 1.5px var(--r95-color-borderLightest, #fff);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' viewBox='0 0 7 4'%3E%3Cpath fill='%23000' d='M0 0h7L3.5 4z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.win95-select__menu {
+  position: fixed;
+  z-index: calc(var(--r95-zIndex-modal, 2) + 20);
+  margin: 0;
+  padding: 1px;
+  list-style: none;
+  max-height: min(240px, 50vh);
+  overflow: auto;
+  background: var(--r95-color-inputBackground, #fff);
+  color: var(--r95-color-materialText, #000);
+  border: 1px solid var(--r95-color-borderDarkest, #0a0a0a);
+  box-shadow: 2px 2px 0 var(--r95-color-borderDark, #868a8e);
+}
+
+.win95-select__option {
+  padding: 3px 8px;
+  font-size: 13px;
+  line-height: 1.3;
+  cursor: default;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.win95-select__option:hover,
+.win95-select__option--selected {
+  background: var(--r95-color-anchor, #000e7a);
+  color: var(--r95-color-materialTextInvert, #fff);
+}
+
+.win95-select__menu:has(.win95-select__option:hover)
+  .win95-select__option--selected:not(:hover) {
+  background: transparent;
+  color: inherit;
+}
+
+.win95-table-wrap,
+.r95-table-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  /* Win95 `canvas` is black; list/table content uses inputBackground (white). */
+  background: var(--r95-color-inputBackground, #ffffff);
+  /* Classic React95 ScrollView / Table sunken border */
+  border-style: solid;
+  border-width: 2px;
+  border-left-color: var(--r95-color-borderDark, #868a8e);
+  border-top-color: var(--r95-color-borderDark, #868a8e);
+  border-right-color: var(--r95-color-borderLightest, #ffffff);
+  border-bottom-color: var(--r95-color-borderLightest, #ffffff);
+  box-shadow: inset 1px 1px 0 var(--r95-color-borderDarkest, #0a0a0a),
+    inset -1px -1px 0 var(--r95-color-borderLight, #dfdfdf);
+}
+
+.win95-table,
+.r95-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: 13px;
+  background: var(--r95-color-inputBackground, #ffffff);
+  color: var(--r95-color-materialText, #0a0a0a);
+}
+
+.r95-table__head-cell {
+  position: relative;
+  padding: 0;
+  background: var(--r95-color-material, #c3c7cb);
+  color: var(--r95-color-materialText, #0a0a0a);
+  font-weight: normal;
+  text-align: left;
+  vertical-align: middle;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.r95-table__head-cell::before {
+  box-sizing: border-box;
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-style: solid;
+  border-width: 2px;
+  border-left-color: var(--r95-color-borderLightest, #ffffff);
+  border-top-color: var(--r95-color-borderLightest, #ffffff);
+  border-right-color: var(--r95-color-borderDark, #868a8e);
+  border-bottom-color: var(--r95-color-borderDark, #868a8e);
+  box-shadow: inset -1px -1px 0 var(--r95-color-borderDarkest, #0a0a0a),
+    inset 1px 1px 0 var(--r95-color-borderLight, #dfdfdf);
+  border-left: none;
+  border-top: none;
+}
+
+.r95-table__head-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  margin: 0;
+  padding: 3px 8px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+}
+
+.r95-table__head-cell--sortable .r95-table__head-btn {
+  cursor: pointer;
+}
+
+.r95-table__head-cell--sortable:active::before {
+  border-left-color: var(--r95-color-borderDarkest, #0a0a0a);
+  border-top-color: var(--r95-color-borderDarkest, #0a0a0a);
+  border-right-color: var(--r95-color-borderLightest, #ffffff);
+  border-bottom-color: var(--r95-color-borderLightest, #ffffff);
+  box-shadow: inset 1px 1px 0 var(--r95-color-borderDark, #868a8e),
+    inset -1px -1px 0 var(--r95-color-borderLight, #dfdfdf);
+  border-left: none;
+  border-top: none;
+}
+
+.r95-table__head-cell--sortable:active .r95-table__head-btn {
+  position: relative;
+  top: 1px;
+  left: 1px;
+}
+
+.r95-table__head-label {
+  padding: 3px 8px;
+  display: block;
+}
+
+.r95-table__head-btn .r95-table__head-label {
+  padding: 0;
+}
+
+.r95-table__sort {
+  font-size: 9px;
+  line-height: 1;
+}
+
+.r95-table__cell,
+.win95-table td {
+  padding: 4px 8px;
+  height: 48px;
+  line-height: 1.2;
+  vertical-align: middle;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+/* Touch-friendly icon actions in tables (overrides global button padding). */
+button.win95-icon-btn[class*='r95_'] {
+  min-height: unset !important;
+  min-width: unset !important;
+  width: 44px !important;
+  height: 44px !important;
+  padding: 4px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  flex-shrink: 0;
+}
+
+button.win95-icon-btn[class*='r95_'] img {
+  display: block;
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
+/* Keep tooltip wrapper from stretching the row layout. */
+.win95-icon-btn-tooltip {
+  display: inline-flex;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+/* Tip inherits white text from selected/hovered table rows — force readable ink. */
+.win95-icon-btn-tooltip > div {
+  color: var(--r95-color-materialText, #0a0a0a);
+}
+
+.r95-table__head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.r95-table__row:hover,
+.win95-table tbody tr:hover {
+  background: var(--r95-color-headerBackground, #000e7a);
+  color: var(--r95-color-materialTextInvert, #ffffff);
+}
+
+/* Legacy plain th/td when used via Win95Table + native thead */
+.win95-table th {
+  position: relative;
+  padding: 3px 8px;
+  background: var(--r95-color-material, #c3c7cb);
+  font-weight: normal;
+  text-align: left;
+  border: 0;
+}
+
+.win95-table th::before {
+  box-sizing: border-box;
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-style: solid;
+  border-width: 2px;
+  border-left-color: var(--r95-color-borderLightest, #ffffff);
+  border-top-color: var(--r95-color-borderLightest, #ffffff);
+  border-right-color: var(--r95-color-borderDark, #868a8e);
+  border-bottom-color: var(--r95-color-borderDark, #868a8e);
+  box-shadow: inset -1px -1px 0 var(--r95-color-borderDarkest, #0a0a0a),
+    inset 1px 1px 0 var(--r95-color-borderLight, #dfdfdf);
+  border-left: none;
+  border-top: none;
+}
+
+.win95-table td {
+  border: 0;
+}
+
+.win95-table tbody tr:nth-child(even) {
+  background: transparent;
+}
+
+.win95-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 12px;
+  box-shadow: var(--r95-shadow-in);
+  background: var(--r95-color-material, #c3c7cb);
+}
+
+.win95-badge--pass {
+  background: #00a000;
+  color: #fff;
+}
+
+.win95-badge--fail {
+  background: #c00000;
+  color: #fff;
+}
+
+.win95-badge--muted {
+  background: var(--r95-color-material, #c3c7cb);
+}
+
+.win95-menu-explorer {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+}
+
+.win95-menu-explorer__tree {
+  width: min(300px, 46%);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--r95-color-material, #c3c7cb);
+  box-sizing: border-box;
+}
+
+.win95-menu-explorer__tree-inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.win95-menu-explorer__tree-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-bottom: 8px;
+}
+
+.win95-menu-explorer__tree-toolbar button[class*='r95_'] {
+  min-height: unset !important;
+  min-width: unset !important;
+  height: auto !important;
+  padding: 4px 10px !important;
+  font-size: 12px !important;
+  line-height: 1.2;
+}
+
+.win95-menu-tree {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.win95-menu-tree__children {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 14px;
+}
+
+.win95-menu-tree__node {
+  margin: 0;
+  padding: 0;
+}
+
+.win95-menu-tree__node--root > .win95-menu-tree__row {
+  margin-bottom: 2px;
+}
+
+.win95-menu-tree__row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 26px;
+  padding: 1px 2px;
+  box-sizing: border-box;
+}
+
+.win95-menu-tree__row--selected {
+  background: var(--r95-color-anchor, #000e7a);
+  color: #fff;
+  outline: 1px dotted #fff;
+  outline-offset: -2px;
+}
+
+.win95-menu-tree__row--selected .win95-menu-tree__select {
+  color: #fff;
+}
+
+.win95-menu-tree__toggle {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  text-decoration: none;
-  color: var(--sea-ink-soft);
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #000;
+  background: #fff;
+  color: #000;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
 }
 
-.nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -6px;
+.win95-menu-tree__toggle:hover,
+.win95-menu-tree__toggle:focus-visible {
+  background: #e0e0e0;
+  outline: 1px dotted #000;
+  outline-offset: 1px;
+}
+
+.win95-menu-tree__toggle-spacer {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.win95-menu-tree__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.win95-menu-tree__icon img {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.win95-menu-tree__label {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 1px 3px;
+}
+
+.win95-menu-tree__select {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 1px 3px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.win95-menu-tree__label-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.win95-menu-tree__select:hover,
+.win95-menu-tree__select:focus-visible {
+  outline: 1px dotted currentColor;
+  outline-offset: 0;
+}
+
+.win95-menu-tree__empty {
+  padding: 4px 4px 4px 24px;
+}
+
+.win95-menu-explorer__detail {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--r95-color-material, #c3c7cb);
+  box-sizing: border-box;
+  /* Reset UA fieldset padding so our inner body controls inset. */
+  padding: 0 !important;
+}
+
+.win95-menu-explorer__detail-body {
+  padding: 12px 14px 14px 22px !important;
+  box-sizing: border-box;
+  overflow: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.win95-menu-explorer__detail-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.win95-menu-explorer__detail-heading img {
+  flex-shrink: 0;
+}
+
+.win95-menu-explorer__detail-heading strong {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.win95-menu-explorer__detail-actions {
+  flex-direction: row !important;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+/* Sold-out tree items: look disabled, stay clickable for details */
+.win95-menu-tree-sold-out {
+  opacity: 0.55;
+}
+
+.win95-menu-tree-sold-out .win95-menu-tree__label-text {
+  color: var(--r95-color-materialTextDisabled, #808080);
+  text-decoration: line-through;
+}
+
+.win95-menu-tree-sold-out .win95-menu-tree__row--selected .win95-menu-tree__label-text {
+  color: #c0c0c0;
+}
+
+.win95-menu-sold-out {
+  text-decoration: line-through;
+  opacity: 0.75;
+}
+
+.win95-menu-sold-out-detail .win95-menu-explorer__detail-heading strong,
+.win95-menu-sold-out-detail > p:not(.win95-menu-sold-out-badge) {
+  color: var(--r95-color-materialTextDisabled, #808080);
+}
+
+.win95-menu-sold-out-detail img {
+  filter: grayscale(1);
+  opacity: 0.65;
+}
+
+.win95-menu-sold-out-badge {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: bold;
+  color: #c00000;
+}
+
+.win95-menu-tabs > li {
+  padding-block: 8px;
+  padding-inline: 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.win95-menu-admin-layout {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.win95-menu-admin-layout__groups {
+  width: min(240px, 38%);
+  flex-shrink: 0;
+  overflow: auto;
+  box-shadow: var(--r95-shadow-in);
+}
+
+.win95-menu-admin-layout__meny-list {
+  width: min(168px, 27%);
+  flex-shrink: 0;
+  overflow: auto;
+  box-shadow: var(--r95-shadow-in);
+}
+
+/* Compact icon actions in the groups tree — not the global touch-size buttons */
+.win95-menu-admin-layout__groups button[class*='r95_'] {
+  min-height: unset !important;
+  min-width: unset !important;
+  width: 22px !important;
+  height: 20px !important;
+  padding: 0 !important;
+  font-size: 12px !important;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.win95-menu-admin-layout__group-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+  min-height: 22px;
+}
+
+.win95-menu-admin-layout__editor {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.win95-menu-admin-layout__menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   width: 100%;
-  height: 2px;
-  transform: scaleX(0);
-  transform-origin: left;
-  background: linear-gradient(90deg, var(--lagoon), #7ed3bf);
-  transition: transform 170ms ease;
+  padding: 3px 6px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
 }
 
-.nav-link:hover,
-.nav-link.is-active {
-  color: var(--sea-ink);
+.win95-menu-admin-layout__menu-btn-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.nav-link:hover::after,
-.nav-link.is-active::after {
-  transform: scaleX(1);
+.win95-menu-admin-layout__menu-btn:hover,
+.win95-menu-admin-layout__menu-btn:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -1px;
 }
 
-@media (max-width: 640px) {
-  .nav-link::after {
-    bottom: -4px;
+.win95-menu-admin-layout__menu-btn[aria-pressed='true'] {
+  background: var(--r95-color-anchor, #000e7a);
+  color: #fff;
+}
+
+.win95-menu-live-badge {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 2px 8px;
+  border: 1px solid #8b0000;
+  background: #c00000;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+}
+
+.win95-menu-live-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c00000;
+  box-shadow: 0 0 0 1px #8b0000;
+}
+
+.win95-menu-admin-layout__menu-btn[aria-pressed='true'] .win95-menu-live-dot {
+  background: #ff6060;
+  box-shadow: 0 0 0 1px #fff;
+}
+
+.win95-org-live-menu {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.win95-catalog-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 180px;
+  overflow: auto;
+  padding: 4px;
+  box-shadow: var(--r95-shadow-in);
+  background: var(--r95-color-inputBackground, #fff);
+}
+
+.win95-catalog-picker__option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 6px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.win95-catalog-picker__option:hover,
+.win95-catalog-picker__option:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -1px;
+}
+
+.win95-catalog-picker__option[aria-pressed='true'] {
+  background: var(--r95-color-anchor, #000e7a);
+  color: #fff;
+}
+
+.win95-catalog-picker__option[aria-pressed='true'] .win95-muted {
+  color: #c0c0c0;
+}
+
+@media (max-width: 48em) {
+  .win95-menu-explorer {
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .win95-menu-explorer__tree {
+    width: 100%;
+    max-height: 260px;
+  }
+
+  .win95-menu-admin-layout {
+    flex-direction: column;
+  }
+
+  .win95-menu-admin-layout__groups,
+  .win95-menu-admin-layout__meny-list {
+    width: 100%;
+    max-height: 200px;
   }
 }
 
-.site-footer {
-  border-top: 1px solid var(--line);
-  background: color-mix(in oklab, var(--header-bg) 84%, transparent 16%);
+.win95-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: var(--r95-zIndex-modal, 2);
 }
 
-.rise-in {
-  animation: rise-in 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+.win95-dialog-host {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: calc(var(--r95-zIndex-modal, 2) + 1);
+  pointer-events: none;
 }
 
-@keyframes rise-in {
-  from {
+.win95-dialog-host > * {
+  pointer-events: auto;
+}
+
+/* Standalone dialog chrome (not React95 Modal — avoids focus/z-order steal). */
+.win95-dialog-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 2px;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 72px);
+  background-color: var(--r95-color-material, #c3c7cb);
+  box-shadow:
+    inset -1px -1px 0 0 var(--r95-color-borderDarkest, #050608),
+    inset 1px 1px 0 0 var(--r95-color-borderLightest, #fff),
+    inset -2px -2px 0 0 var(--r95-color-borderDark, #6a6e71),
+    inset 2px 2px 0 0 var(--r95-color-borderLight, #c3c7cb);
+}
+
+.win95-dialog-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 6px;
+  overflow: auto;
+  background-color: var(--r95-color-material, #c3c7cb);
+  box-shadow:
+    inset 1px 1px 0 0 var(--r95-color-borderDark, #6a6e71),
+    inset -1px -1px 0 0 var(--r95-color-borderLightest, #fff);
+}
+
+.win95-dialog-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 6px;
+}
+
+/* Classic Win95 “copying files” progress dialog */
+.win95-copy-progress__transfer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 40px;
+  padding: 4px 8px;
+}
+
+.win95-copy-progress__folder {
+  flex-shrink: 0;
+  image-rendering: pixelated;
+}
+
+.win95-copy-progress__flight {
+  position: relative;
+  flex: 1;
+  height: 28px;
+  overflow: hidden;
+}
+
+.win95-copy-progress__paper {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  display: block;
+  opacity: 0;
+  animation: win95-copy-fly 1.4s linear infinite;
+  image-rendering: pixelated;
+}
+
+.win95-copy-progress__paper--1 {
+  animation-delay: 0s;
+}
+
+.win95-copy-progress__paper--2 {
+  animation-delay: 0.45s;
+}
+
+.win95-copy-progress__paper--3 {
+  animation-delay: 0.9s;
+}
+
+@keyframes win95-copy-fly {
+  0% {
+    left: 0%;
+    transform: translateY(0) rotate(-8deg);
     opacity: 0;
-    transform: translateY(12px);
   }
-  to {
+  12% {
     opacity: 1;
-    transform: translateY(0);
+  }
+  50% {
+    left: 50%;
+    transform: translateY(-10px) rotate(6deg);
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    transform: translate(-100%, 2px) rotate(-4deg);
+    opacity: 0;
   }
 }
 
+.win95-copy-progress__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  font-size: 12px;
+}
+
+.win95-copy-progress__meta > div {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 8px;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.win95-copy-progress__meta dt {
+  margin: 0;
+  font-weight: 600;
+}
+
+.win95-copy-progress__meta dd {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.win95-copy-progress__status {
+  margin: 0;
+  font-size: 12px;
+  min-height: 1.35em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .win95-copy-progress__paper {
+    animation: none;
+    opacity: 0.85;
+    left: 42%;
+    top: 6px;
+  }
+
+  .win95-copy-progress__paper--2,
+  .win95-copy-progress__paper--3 {
+    display: none;
+  }
+}
+
+/* Win95 Welcome-style help tour */
+.win95-welcome-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  min-height: 100%;
+}
+
+.win95-welcome-heading {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #000;
+}
+
+.win95-welcome-heading em {
+  font-style: italic;
+  font-weight: 700;
+}
+
+.win95-welcome-body {
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
+}
+
+.win95-welcome-tip {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #ffffcc !important;
+  overflow: auto;
+}
+
+.win95-welcome-tip__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.win95-welcome-tip__title {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.win95-welcome-tip__body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.win95-welcome-monitor-wrap {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+  padding-bottom: 8px;
+}
+
+.win95-welcome-preview {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.win95-welcome-preview__scale {
+  width: 250%;
+  height: 250%;
+  transform: scale(0.4);
+  transform-origin: top left;
+}
+
+.win95-welcome-sidebar {
+  width: 148px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.win95-welcome-sidebar__spacer {
+  flex: 1;
+  min-height: 8px;
+}
+
+.win95-welcome-sidebar__divider {
+  margin: 0;
+  border: none;
+  border-top: 1px solid #808080;
+  border-bottom: 1px solid #fff;
+}
+
+/* react95.io Monitor — CRT frame using @react95/core tokens */
+.win95-monitor {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 26px;
+}
+
+.win95-monitor__inner {
+  position: relative;
+}
+
+.win95-monitor__body {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  width: var(--win95-monitor-w, 195px);
+  height: var(--win95-monitor-h, 155px);
+  padding: 12px;
+  background: var(--r95-color-material, #c3c7cb);
+  border-top: 4px solid var(--r95-color-borderLightest, #fff);
+  border-left: 4px solid var(--r95-color-borderLightest, #fff);
+  border-bottom: 4px solid var(--r95-color-borderDark, #808080);
+  border-right: 4px solid var(--r95-color-borderDark, #808080);
+  outline: 1px dotted var(--r95-color-material, #c3c7cb);
+  outline-offset: -3px;
+  box-shadow: 1px 1px 0 1px var(--r95-color-borderDarkest, #000);
+}
+
+.win95-monitor__body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  outline: 1px dotted var(--r95-color-material, #c3c7cb);
+  pointer-events: none;
+}
+
+.win95-monitor__body::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  bottom: 4px;
+  right: 12px;
+  width: 10px;
+  border-top: 2px solid #4d9046;
+  border-bottom: 2px solid #07ff00;
+}
+
+.win95-monitor__screen {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: var(--r95-color-canvas, #fff);
+  box-shadow: var(--r95-shadow-in, inset 1px 1px 0 #808080, inset -1px -1px 0 #fff);
+}
+
+.win95-monitor__stand {
+  box-sizing: border-box;
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  height: 10px;
+  width: 50%;
+  background: var(--r95-color-material, #c3c7cb);
+  border-left: 2px solid var(--r95-color-borderLightest, #fff);
+  border-bottom: 2px solid var(--r95-color-borderDarkest, #000);
+  border-right: 2px solid var(--r95-color-borderDarkest, #000);
+  box-shadow: inset 0 0 0 2px var(--r95-color-borderDark, #808080);
+}
+
+.win95-monitor__stand::before {
+  content: '';
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 8px;
+  background: var(--r95-color-material, #c3c7cb);
+  border-left: 2px solid var(--r95-color-borderLightest, #fff);
+  border-right: 2px solid var(--r95-color-borderDarkest, #000);
+  box-shadow: inset 0 0 0 2px var(--r95-color-borderDark, #808080);
+}
+
+.win95-monitor__stand::after {
+  content: '';
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150%;
+  height: 4px;
+  background: var(--r95-color-material, #c3c7cb);
+  border: 2px solid var(--r95-color-borderDark, #808080);
+  border-bottom: none;
+  box-shadow:
+    inset 1px 1px 0 1px var(--r95-color-borderLightest, #fff),
+    1px 1px 0 1px var(--r95-color-borderDarkest, #000);
+}
+
+@media (max-width: 40em) {
+  .win95-welcome-body {
+    flex-direction: column;
+  }
+
+  .win95-welcome-sidebar {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .win95-welcome-sidebar__spacer {
+    display: none;
+  }
+
+  .win95-welcome-sidebar__divider {
+    display: none;
+  }
+
+  .win95-welcome-sidebar button {
+    flex: 1;
+  }
+}
+
+/* Classic Win95 Start menu: raised shell + left brand strip */
+.win95-start-menu-shell {
+  display: flex;
+  align-items: stretch;
+  min-width: 300px;
+  background-color: var(--r95-color-material, #c3c7cb);
+  box-shadow: var(--r95-shadow-out);
+}
+
+.win95-start-menu-brand {
+  width: 28px;
+  flex-shrink: 0;
+  align-self: stretch;
+  min-height: 200px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 6px 0 8px;
+  background: linear-gradient(
+    to top,
+    #000080 0%,
+    #000080 55%,
+    #1084d0 100%
+  );
+}
+
+.win95-start-menu-brand__text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  color: #fff;
+  font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif;
+  font-size: 19px;
+  line-height: 1;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.win95-start-menu-brand__word {
+  font-weight: 400;
+}
+
+.win95-start-menu-brand__bold {
+  font-weight: 900;
+}
+
+/* React95 icons shim uses <img>; core styles target <svg> */
+.win95-start-menu {
+  min-width: 0;
+  flex: 1;
+  padding: 2px !important;
+  box-shadow: none !important;
+}
+
+.win95-start-menu > li:not(.win95-start-menu__separator) {
+  font-size: 14px;
+  padding-block: 10px !important;
+  padding-inline: 12px 16px !important;
+}
+
+.win95-start-menu > li.win95-start-menu__separator {
+  list-style: none;
+  margin: 4px 2px;
+  padding: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  pointer-events: none;
+}
+
+.win95-start-menu > li img {
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+/* Matches `Separator` from the react95 package (etched double line) */
+.win95-separator {
+  box-sizing: border-box;
+  margin: 0;
+  border-top: 2px solid var(--r95-color-borderDark, #868a8e);
+  border-bottom: 2px solid var(--r95-color-borderLightest, #ffffff);
+}
+
+.win95-separator--vertical {
+  width: auto;
+  border-top: none;
+  border-bottom: none;
+  border-left: 2px solid var(--r95-color-borderDark, #868a8e);
+  border-right: 2px solid var(--r95-color-borderLightest, #ffffff);
+}
+
+.win95-titlebar-icon img {
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated;
+  display: block;
+}
+
+/* Maximized desktop windows fill the viewport above the taskbar */
+.win95-window--maximized {
+  left: 0 !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 56px !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+  transform: none !important;
+  translate: none !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.win95-window--maximized .win95-window-content {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+/* Responsive window sizing — CSS-only so SSR matches client */
+@media (max-width: 64em) {
+  /* Center fixed windows above the taskbar (drag is disabled on touch) */
+  .win95-window--responsive {
+    left: 50% !important;
+    top: calc(
+      env(safe-area-inset-top, 0px) +
+        (100dvh - 56px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) /
+          2
+    ) !important;
+    transform: translate(-50%, -50%) !important;
+    translate: none !important;
+    right: auto !important;
+    bottom: auto !important;
+    margin: 0 !important;
+  }
+
+  .win95-window-content {
+    width: min(100%, calc(100vw - 32px)) !important;
+    max-height: min(
+      calc(100dvh - 64px - env(safe-area-inset-top, 0px)),
+      var(--win95-vv-max-height, 100dvh)
+    ) !important;
+  }
+
+  .win95-window-content.win95-window--admin {
+    max-height: calc(
+      100dvh - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
+    ) !important;
+    min-height: 0 !important;
+  }
+
+  /* Maximized beats compact centering */
+  .win95-window--responsive.win95-window--maximized {
+    left: 0 !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+    transform: none !important;
+    translate: none !important;
+  }
+
+  .win95-dialog-content {
+    width: min(100%, calc(100vw - 24px)) !important;
+  }
+}
+
+@media (max-width: 40em) {
+  button[class*='r95_'] {
+    font-size: 16px;
+    min-height: 48px;
+    padding-block: 12px !important;
+    padding-inline: 18px !important;
+  }
+
+  .draggable button[class*='r95_'] {
+    min-height: unset !important;
+    min-width: unset !important;
+    width: 17px !important;
+    height: 14px !important;
+    padding: 0 !important;
+    font-size: 10px !important;
+  }
+
+  .win95-menu-admin-layout__groups button[class*='r95_'] {
+    min-height: unset !important;
+    min-width: unset !important;
+    width: 26px !important;
+    height: 24px !important;
+    padding: 0 !important;
+    font-size: 13px !important;
+  }
+
+  .win95-window-content {
+    width: calc(
+      100vw - 16px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)
+    ) !important;
+    max-height: min(
+      calc(
+        100dvh - 56px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
+      ),
+      var(--win95-vv-max-height, 100dvh)
+    ) !important;
+  }
+
+  .win95-window-content.win95-window--admin {
+    min-height: 0 !important;
+  }
+
+  .win95-admin-tab-body {
+    min-height: 0;
+  }
+
+  .win95-dialog-content {
+    width: calc(
+      100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)
+    ) !important;
+  }
+}
+
+/* React95 TaskBar styles target svg; mirror spacing for img icons in the shim */
+.win95-taskbar [class*='mo9'] img {
+  margin-right: var(--r95-space-4);
+  width: var(--r95-space-20);
+  height: var(--r95-space-20);
+  image-rendering: pixelated;
+  display: block;
+  flex-shrink: 0;
+}
+
+/*
+ * React95 hardcodes the Start menu wrapper at bottom:28px (default taskbar
+ * height). Our touch taskbar is taller, so pin the menu flush above it.
+ */
+.win95-taskbar > *:has(.win95-start-menu-shell) {
+  bottom: 100% !important;
+}
+
+/* Logged-in tray icon — sits left of the clock */
+.win95-taskbar-user-mount {
+  display: flex;
+  align-items: stretch;
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+
+.win95-taskbar-user {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 2px 4px;
+  min-height: unset;
+  min-width: unset;
+  border: none;
+  background: transparent;
+  box-shadow: var(--r95-shadow-in);
+  cursor: default;
+  touch-action: manipulation;
+}
+
+.win95-taskbar-user:active {
+  padding: 3px 3px 1px 5px;
+}
+
+.win95-taskbar-user img,
+.win95-taskbar-user svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+/* Taskbar buttons keep react95 compact sizing */
+.win95-taskbar button[class*='r95_'] {
+  font-size: inherit;
+  min-height: unset;
+  padding-block: var(--r95-space-2) !important;
+  padding-inline: var(--r95-space-3) !important;
+  touch-action: manipulation;
+}
+
+.win95-taskbar button[class*='r95_'][class*='mo3'] {
+  padding-inline: var(--r95-space-5) !important;
+}
+
+/* Task bar — taller on touch devices */
+@media (max-width: 64em) {
+  .win95-taskbar {
+    min-height: 44px !important;
+    height: auto !important;
+    padding-block: 6px !important;
+    padding-inline: max(8px, env(safe-area-inset-left, 0px))
+      max(8px, env(safe-area-inset-right, 0px)) !important;
+  }
+
+  .win95-taskbar button[class*='r95_'] {
+    min-height: unset;
+    padding-block: var(--r95-space-2) !important;
+  }
+
+  .win95-taskbar button[class*='r95_'][class*='mo3'] {
+    padding-inline: var(--r95-space-5) !important;
+  }
+
+  .win95-start-menu-shell {
+    min-width: min(320px, calc(100vw - 24px));
+    max-width: calc(100vw - 24px);
+  }
+
+  .win95-start-menu-brand {
+    width: 26px;
+  }
+
+  .win95-start-menu-brand__text {
+    font-size: 17px;
+  }
+
+  .win95-start-menu > li:not(.win95-start-menu__separator) {
+    font-size: 16px;
+    padding-block: 14px !important;
+    min-height: 48px;
+  }
+
+  .win95-dialog-host > * {
+    max-width: 420px;
+  }
+
+  .win95-page,
+  .win95-page-narrow {
+    padding-inline: 4px;
+  }
+
+  .win95-table,
+  .r95-table {
+    font-size: 14px;
+  }
+
+  .win95-table th,
+  .win95-table td,
+  .r95-table__cell {
+    padding: 10px 8px;
+  }
+}
+
+@media (max-width: 40em) {
+  .win95-taskbar button[class*='r95_'] {
+    min-width: unset;
+    min-height: unset;
+    font-size: inherit;
+    padding-block: var(--r95-space-2) !important;
+    padding-inline: var(--r95-space-3) !important;
+  }
+
+  .win95-taskbar button[class*='r95_'][class*='mo3'] {
+    padding-inline: var(--r95-space-5) !important;
+  }
+}
+
+/* Offline connectivity strip */
+.win95-offline-banner {
+  position: fixed;
+  left: max(8px, env(safe-area-inset-left, 0px));
+  right: max(8px, env(safe-area-inset-right, 0px));
+  top: max(8px, env(safe-area-inset-top, 0px));
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #ffffe1;
+  box-shadow: inset -1px -1px #000, inset 1px 1px #fff, inset -2px -2px #808080,
+    inset 2px 2px #dfdfdf;
+  font-size: 13px;
+  pointer-events: auto;
+}
+
+.win95-offline-banner__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.win95-offline-banner__close {
+  flex-shrink: 0;
+  min-height: 32px;
+  min-width: 32px;
+  padding: 4px 8px;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  border: none;
+  background: #c0c0c0;
+  box-shadow: inset -1px -1px #000, inset 1px 1px #fff, inset -2px -2px #808080,
+    inset 2px 2px #dfdfdf;
+}
+
+/* Larger desktop icons on phones */
+@media (max-width: 40em) {
+  .win95-desktop-icons {
+    max-width: 104px;
+  }
+
+  .win95-desktop-icon {
+    width: 88px;
+    padding: 6px 4px;
+    font-size: 12px;
+  }
+
+  .win95-desktop-icon__glyph {
+    width: 44px;
+    height: 44px;
+  }
+
+  .win95-desktop-icon__glyph img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Installed / standalone PWA */
+@media (display-mode: standalone) {
+  html,
+  body {
+    overscroll-behavior: none;
+  }
+
+  .win95-desktop-surface {
+    overscroll-behavior: none;
+  }
+}
