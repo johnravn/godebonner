@@ -14,9 +14,10 @@ import { fileURLToPath } from 'node:url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
 const publicDir = path.join(root, 'public')
-/** Filled tan circle — line-art-only sirkel_v3.png is nearly invisible on teal. */
+/** Filled tan circle — line-art-only sirkel_v3.png is nearly invisible on solid fills. */
 const source = path.join(publicDir, 'godebonner_sirkel_v3_oransje.png')
-const teal = '#008080'
+/** Classic Win95 material grey (not desktop teal) */
+const iconBg = '#C0C0C0'
 
 function findMagickBin() {
   for (const cmd of ['magick', 'convert']) {
@@ -37,7 +38,7 @@ function run(bin, args) {
 }
 
 /**
- * Solid teal canvas + trimmed logo centered. PNG24 / no alpha (iOS fills
+ * Solid Win95-grey canvas + trimmed logo centered. PNG24 / no alpha (iOS fills
  * transparency with black).
  * @param {string} bin
  * @param {number} canvas
@@ -48,7 +49,7 @@ function writeIcon(bin, canvas, logo, out) {
   run(bin, [
     '-size',
     `${canvas}x${canvas}`,
-    `xc:${teal}`,
+    `xc:${iconBg}`,
     '(',
     source,
     '-trim',
