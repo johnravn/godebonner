@@ -2406,15 +2406,29 @@ button.win95-icon-btn[class*='r95_'] img {
   align-self: stretch;
   min-height: 200px;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 6px 0 8px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
   background: linear-gradient(
     to top,
     #000080 0%,
     #000080 55%,
     #1084d0 100%
   );
+}
+
+.win95-start-menu-brand__version {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  color: rgba(255, 255, 255, 0.75);
+  font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  user-select: none;
 }
 
 .win95-start-menu-brand__text {

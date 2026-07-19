@@ -48,6 +48,7 @@ export function Win95StartMenu({ children }: Win95StartMenuProps) {
   return (
     <div ref={shellRef} className="win95-start-menu-shell">
       <div className="win95-start-menu-brand" aria-hidden>
+        <span className="win95-start-menu-brand__version">v{__APP_VERSION__}</span>
         <span className="win95-start-menu-brand__text">
           <span className="win95-start-menu-brand__word">Gode</span>
           <span className="win95-start-menu-brand__bold">Bønner</span>

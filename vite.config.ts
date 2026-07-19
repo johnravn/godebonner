@@ -10,6 +10,9 @@ import viteReact from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const pkg = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, 'package.json'), 'utf8'),
+) as { version: string }
 const react95Core = path.resolve(__dirname, 'node_modules/@react95/core/dist')
 const react95IconsPng = path.resolve(
   __dirname,
@@ -157,6 +160,9 @@ function react95TaskBarFocusEsbuildPlugin() {
 }
 
 const config = defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
   resolve: {
     tsconfigPaths: true,
     // Prevent duplicate React copies (invalid hook call in AwaitInner / HMR).

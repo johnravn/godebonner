@@ -1,6 +1,8 @@
 /// <reference types="vite/client" />
 /// <reference types="vite-plugin-pwa/client" />
 
+declare const __APP_VERSION__: string
+
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[]
   prompt: () => Promise<void>
